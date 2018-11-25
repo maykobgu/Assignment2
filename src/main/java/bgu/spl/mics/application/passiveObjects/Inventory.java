@@ -12,6 +12,7 @@ package bgu.spl.mics.application.passiveObjects;
  * <p>
  * You can add ONLY private fields and methods to this class as you see fit.
  */
+
 public class Inventory {
 
 
@@ -30,8 +31,8 @@ public class Inventory {
      * @param inventory 	Data structure containing all data necessary for initialization
      * 						of the inventory.
      */
-	public void load (BookInventoryInfo[ ] inventory ) {
-		
+	public void load (BookInventoryInfo[ ] inventory) {
+
 	}
 	
 	/**
