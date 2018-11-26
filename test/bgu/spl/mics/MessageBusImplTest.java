@@ -5,7 +5,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Queue;
+
 import static org.junit.Assert.*;
+
 
 public class MessageBusImplTest {
     MessageBusImpl bus;
@@ -15,6 +18,7 @@ public class MessageBusImplTest {
     MicroService resource;
     MicroService selling;
     MicroService time;
+    Queue queue;
 
     @Before
     public void setUp() {

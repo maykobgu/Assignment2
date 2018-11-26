@@ -14,15 +14,18 @@ package bgu.spl.mics.application.passiveObjects;
  */
 
 public class Inventory {
-
+    private static Inventory instance = null;
 
 	/**
      * Retrieves the single instance of this class.
      */
 	public static Inventory getInstance() {
 		//TODO: Implement this
-		return null;
-	}
+            if(instance == null) {
+                instance = new Inventory();
+            }
+            return instance;
+        }
 	
 	/**
      * Initializes the store inventory. This method adds all the items given to the store

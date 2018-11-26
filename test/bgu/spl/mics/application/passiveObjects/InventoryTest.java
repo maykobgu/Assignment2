@@ -1,25 +1,18 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.services.InventoryService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import sun.jvm.hotspot.runtime.Bytes;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 
 import static bgu.spl.mics.application.passiveObjects.OrderResult.*;
 import static org.junit.Assert.*;
 
 public class InventoryTest {
-    Inventory inv;
-    BookInventoryInfo[] arr;
-    HashMap<String, Integer> output;
+    private Inventory inv;
+    private BookInventoryInfo[] arr;
 
     @Before
     public void setUp() {
@@ -30,16 +23,16 @@ public class InventoryTest {
         arr[0] = book0;
         arr[1] = book1;
         arr[2] = book2;
-
     }
 
     @Test
     public void getInstance() throws Exception {
-        getInstance();
+//        TODO
     }
 
     @Test
     public void load() throws Exception {
+//        TODO
 //        inv.load(arr);
 //        assertEquals("harry potter", arr[0].getBookTitle());
 //        assertEquals(5, arr[0].getAmountInInventory());
@@ -70,7 +63,6 @@ public class InventoryTest {
 
     @Test
     public void printInventoryToFile() throws Exception {
-//        save to file
         inv.printInventoryToFile("file");
         String readFromFile = new String(Files.readAllBytes(Paths.get("file")));
         String map = "harry potter:5,snow white:3,little prince:0";
@@ -80,6 +72,6 @@ public class InventoryTest {
     @After
     public void tearDown() {
         inv = null;
+        arr = null;
     }
-
 }

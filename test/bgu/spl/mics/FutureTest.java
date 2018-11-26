@@ -8,7 +8,7 @@ import static java.util.concurrent.TimeUnit.*;
 import static org.junit.Assert.*;
 
 public class FutureTest {
-    Future newFuture;
+    private Future newFuture;
 
     @Before
     public void setUp() {
