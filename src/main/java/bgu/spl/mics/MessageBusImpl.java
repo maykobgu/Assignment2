@@ -1,7 +1,5 @@
 package bgu.spl.mics;
 
-import java.util.Queue;
-
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
  * Write your implementation here!
@@ -9,25 +7,36 @@ import java.util.Queue;
  */
 public class MessageBusImpl implements MessageBus {
 
+    /**
+     * Retrieves the single instance of this class.
+     */
+    public static MessageBusImpl getInstance(){
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
         // TODO Auto-generated method stub
+
     }
 
     @Override
     public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
         // TODO Auto-generated method stub
+
     }
 
     @Override
     public <T> void complete(Event<T> e, T result) {
         // TODO Auto-generated method stub
+
     }
 
     @Override
     public void sendBroadcast(Broadcast b) {
         // TODO Auto-generated method stub
+
     }
 
 
@@ -39,8 +48,6 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void register(MicroService m) {
-//        m.getQueue() = new Queue();
-
         // TODO Auto-generated method stub
 
     }
@@ -56,4 +63,7 @@ public class MessageBusImpl implements MessageBus {
         // TODO Auto-generated method stub
         return null;
     }
+
+
+
 }

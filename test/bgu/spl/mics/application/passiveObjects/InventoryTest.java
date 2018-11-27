@@ -27,6 +27,8 @@ public class InventoryTest {
 
     @Test
     public void getInstance() throws Exception {
+        inv =null;
+        assertNotNull(inv.getInstance());
 //        TODO
     }
 

@@ -17,49 +17,126 @@ public class FutureTest {
 
     @Test
     public void get() throws Exception {
-        assertNull(newFuture.get());
-        newFuture.resolve("resolve");
-        assertEquals("resolve", newFuture.get());
-        newFuture.resolve('s');
-        assertEquals('s', newFuture.get());
-        newFuture.resolve(2);
-        assertEquals(2, newFuture.get());
-        newFuture.resolve(3.5);
-        assertEquals(3.5, newFuture.get());
+        try {
+            assertNull(newFuture.get());
+        } catch (Exception e) {
+            fail("the future object supposed to be null");
+        }
+        try {
+            newFuture.resolve("resolve");
+            assertEquals("resolve", newFuture.get());
+        } catch (Exception e) {
+            fail("String object should be supported");
+        }
+        try {
+            newFuture.resolve('s');
+            assertEquals('s', newFuture.get());
+        } catch (Exception e) {
+            fail("char object should be supported");
+        }
+        try {
+            newFuture.resolve(2);
+            assertEquals(2, newFuture.get());
+        } catch (Exception e) {
+            fail("int object should be supported");
+        }
+        try {
+            newFuture.resolve(3.5);
+            assertEquals(3.5, newFuture.get());
+        } catch (Exception e) {
+            fail("double object should be supported");
+        }
     }
 
     @Test
     public void resolve() throws Exception {
-        newFuture.resolve("resolve");
-        assertEquals("resolve", newFuture.get());
-        newFuture.resolve('s');
-        assertEquals('s', newFuture.get());
-        newFuture.resolve(2);
-        assertEquals(2, newFuture.get());
-        newFuture.resolve(3.5);
-        assertEquals(3.5, newFuture.get());
+        try {
+            newFuture.resolve("resolve");
+            assertEquals("resolve", newFuture.get());
+        } catch (Exception e) {
+            fail("String object should be supported");
+        }
+
+        try {
+            newFuture.resolve('s');
+            assertEquals('s', newFuture.get());
+        } catch (Exception e) {
+            fail("char object should be supported");
+        }
+
+        try {
+            newFuture.resolve(2);
+            assertEquals(2, newFuture.get());
+        } catch (Exception e) {
+            fail("int object should be supported");
+        }
+
+        try {
+            newFuture.resolve(3.5);
+            assertEquals(3.5, newFuture.get());
+        } catch (Exception e) {
+            fail("double object should be supported");
+        }
     }
 
     @Test
     public void isDone() throws Exception {
-        assertFalse(newFuture.isDone());
-        newFuture.resolve("resolve");
-        assertTrue(newFuture.isDone());
-        newFuture.resolve(null);
-        assertFalse(newFuture.isDone());
+        try {
+            assertFalse(newFuture.isDone());
+        } catch (Exception e) {
+            fail("Future object supposed to be false");
+        }
+
+        try {
+            newFuture.resolve("resolve");
+            assertTrue(newFuture.isDone());
+        } catch (Exception e) {
+            fail("Future object supposed to be true");
+        }
+
+        try {
+            newFuture.resolve(null);
+            assertFalse(newFuture.isDone());
+        } catch (Exception e) {
+            fail("Future object supposed to be false");
+        }
     }
 
     @Test
     public void getTimeout() throws Exception {
-        assertNull(newFuture.get(10, SECONDS));
-        newFuture.resolve("resolve");
-        assertEquals("resolve", newFuture.get(5, SECONDS));
-        newFuture.resolve('s');
-        assertEquals('s', newFuture.get(100, MILLISECONDS));
-        newFuture.resolve(2);
-        assertEquals(2, newFuture.get(1, SECONDS));
-        newFuture.resolve(3.5);
-        assertEquals(3.5, newFuture.get(2, SECONDS));
+        try {
+            assertNull(newFuture.get(10, SECONDS));
+        } catch (Exception e) {
+            fail("Future object supposed to be null");
+        }
+
+        try {
+            newFuture.resolve("resolve");
+            assertEquals("resolve", newFuture.get(5, SECONDS));
+        } catch (Exception e) {
+            fail("String object should be supported");
+        }
+
+        try {
+            newFuture.resolve('s');
+            assertEquals('s', newFuture.get(100, MILLISECONDS));
+        } catch (Exception e) {
+            fail("char object should be supported");
+        }
+
+        try {
+            newFuture.resolve(2);
+            assertEquals(2, newFuture.get(1, SECONDS));
+        } catch (Exception e) {
+            fail("int object should be supported");
+        }
+
+        try {
+            newFuture.resolve(3.5);
+            assertEquals(3.5, newFuture.get(2, SECONDS));
+        } catch (Exception e) {
+            fail("double object should be supported");
+        }
     }
 
     @After
