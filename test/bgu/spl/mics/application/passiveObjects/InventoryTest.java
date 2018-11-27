@@ -27,8 +27,12 @@ public class InventoryTest {
 
     @Test
     public void getInstance() throws Exception {
-        inv =null;
-        assertNotNull(inv.getInstance());
+        try {
+            inv = null;
+            assertNotNull(inv.getInstance());
+        } catch (Exception e) {
+            fail("instance should not be null");
+        }
 //        TODO
     }
 
@@ -49,26 +53,55 @@ public class InventoryTest {
 
     @Test
     public void take() throws Exception {
-        assertEquals(NOT_IN_STOCK, inv.take(arr[2].getBookTitle()));
-        assertEquals(NOT_IN_STOCK, inv.take("my book"));
-        assertEquals(SUCCESSFULLY_TAKEN, inv.take(arr[0].getBookTitle()));
+        try {
+            assertEquals(NOT_IN_STOCK, inv.take(arr[2].getBookTitle()));
+        } catch (Exception e) {
+            fail("result should be NOT_IN_STOCK");
+        }
+        try {
+            assertEquals(NOT_IN_STOCK, inv.take("my book"));
+        } catch (Exception e) {
+            fail("result should be NOT_IN_STOCK");
+        }
+        try {
+            assertEquals(SUCCESSFULLY_TAKEN, inv.take(arr[0].getBookTitle()));
+        } catch (Exception e) {
+            fail("result should be SUCCESSFULLY_TAKEN");
+        }
     }
 
 
     @Test
     public void checkAvailabiltyAndGetPrice() throws Exception {
-        assertEquals(10, inv.checkAvailabiltyAndGetPrice(arr[0].getBookTitle()));
-        assertEquals(100, inv.checkAvailabiltyAndGetPrice(arr[1].getBookTitle()));
-        assertEquals(-1, inv.checkAvailabiltyAndGetPrice(arr[2].getBookTitle()));
-        assertEquals(-1, inv.checkAvailabiltyAndGetPrice("my book"));
+        try {
+            assertEquals(10, inv.checkAvailabiltyAndGetPrice(arr[0].getBookTitle()));
+        } catch (Exception e) {
+            fail("expected result: 10, got: " + inv.checkAvailabiltyAndGetPrice(arr[0].getBookTitle()));
+        }
+        try {
+            assertEquals(100, inv.checkAvailabiltyAndGetPrice(arr[1].getBookTitle()));
+        } catch (Exception e) {
+            fail("expected result: 100, got: " + inv.checkAvailabiltyAndGetPrice(arr[1].getBookTitle()));
+        }
+        try {
+            assertEquals(-1, inv.checkAvailabiltyAndGetPrice(arr[2].getBookTitle()));
+        } catch (Exception e) {
+            fail("expected result: -1, got: " + inv.checkAvailabiltyAndGetPrice(arr[2].getBookTitle()));
+        }
+        try {
+            assertEquals(-1, inv.checkAvailabiltyAndGetPrice("my book"));
+        } catch (Exception e) {
+            fail("expected result: -1, got: " + inv.checkAvailabiltyAndGetPrice("my book"));
+        }
     }
 
     @Test
     public void printInventoryToFile() throws Exception {
-        inv.printInventoryToFile("file");
-        String readFromFile = new String(Files.readAllBytes(Paths.get("file")));
-        String map = "harry potter:5,snow white:3,little prince:0";
-        assertEquals(map, readFromFile);
+//        TODO - dont implement
+//        inv.printInventoryToFile("file");
+//        String readFromFile = new String(Files.readAllBytes(Paths.get("file")));
+//        String map = "harry potter:5,snow white:3,little prince:0";
+//        assertEquals(map, readFromFile);
     }
 
     @After
