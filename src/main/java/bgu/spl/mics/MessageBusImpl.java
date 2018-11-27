@@ -39,7 +39,7 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void register(MicroService m) {
-        m.getQueue() = new Queue();
+//        m.getQueue() = new Queue();
 
         // TODO Auto-generated method stub
 
