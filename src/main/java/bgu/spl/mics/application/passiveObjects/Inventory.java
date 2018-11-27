@@ -12,15 +12,20 @@ package bgu.spl.mics.application.passiveObjects;
  * <p>
  * You can add ONLY private fields and methods to this class as you see fit.
  */
+
 public class Inventory {
+    private static Inventory instance = null;
 
 	/**
      * Retrieves the single instance of this class.
      */
 	public static Inventory getInstance() {
 		//TODO: Implement this
-		return null;
-	}
+            if(instance == null) {
+                instance = new Inventory();
+            }
+            return instance;
+        }
 	
 	/**
      * Initializes the store inventory. This method adds all the items given to the store
@@ -29,8 +34,8 @@ public class Inventory {
      * @param inventory 	Data structure containing all data necessary for initialization
      * 						of the inventory.
      */
-	public void load (BookInventoryInfo[ ] inventory ) {
-		
+	public void load (BookInventoryInfo[ ] inventory) {
+
 	}
 	
 	/**
