@@ -18,7 +18,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import javafx.util.Pair;
+import jdk.internal.net.http.common.Pair;
 
 /**
  * This is the Main class of the application. You should parse the input file,
@@ -43,10 +43,10 @@ public class BookStoreRunner {
 
         BookInventoryInfo[] inventory = new BookInventoryInfo[initialInventory.size()];
         Inventory inv = new Inventory();
-        for (int i = 0; i < ((JsonArray) initialInventory).size(); i++) {
-            String bookTitle = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("bookTitle").getAsString();
-            int amountInInventory = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("amount").getAsInt();
-            int price = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("price").getAsInt();
+        for (int i = 0; i < initialInventory.size(); i++) {
+            String bookTitle = initialInventory.get(i).getAsJsonObject().get("bookTitle").getAsString();
+            int amountInInventory = initialInventory.get(i).getAsJsonObject().get("amount").getAsInt();
+            int price = initialInventory.get(i).getAsJsonObject().get("price").getAsInt();
             inventory[i] = new BookInventoryInfo(bookTitle, amountInInventory, price);
         }
         inv.load(inventory);
@@ -57,7 +57,7 @@ public class BookStoreRunner {
             vehiclesList[i] = new DeliveryVehicle(license, speed);
         }
         ResourcesHolder rh = new ResourcesHolder(vehiclesList);
-        TimeService tickTime = new TimeService(((JsonObject) time).get("speed").getAsInt(), ((JsonObject) time).get("duration").getAsInt());
+        TimeService tickTime = new TimeService(time.get("speed").getAsInt(), time.get("duration").getAsInt());
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
             int id = element.getAsJsonObject().get("id").getAsInt();
