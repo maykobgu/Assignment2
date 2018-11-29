@@ -1,6 +1,11 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.passiveObjects.Inventory;
+import javafx.util.Pair;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -9,12 +14,13 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
  */
 public class MessageBusImpl implements MessageBus {
     private static MessageBusImpl instance = null;
+    HashMap<MicroService, ArrayBlockingQueue<Message>> queues;
 
     /**
      * Retrieves the single instance of this class.
      */
-    public static MessageBusImpl getInstance(){
-        if(instance == null) {
+    public static MessageBusImpl getInstance() {
+        if (instance == null) {
             instance = new MessageBusImpl();
         }
         return instance;
@@ -23,7 +29,7 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
         // TODO Auto-generated method stub
-
+//        m.subscribeEvent(type,  );
     }
 
     @Override
@@ -48,27 +54,28 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
         // TODO Auto-generated method stub
+
+//        inserts a message to the queue
         return null;
     }
 
     @Override
     public void register(MicroService m) {
         // TODO Auto-generated method stub
-
+        queues.put(m, new ArrayBlockingQueue<>(100));
     }
 
     @Override
     public void unregister(MicroService m) {
         // TODO Auto-generated method stub
-
+        queues.remove(m);
     }
 
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {
         // TODO Auto-generated method stub
-        return null;
+        ArrayBlockingQueue mqueue = queues.get(m);
+        while (mqueue.isEmpty()) ;  //waits for message to be available
+        return (Message) mqueue.poll();  //takes a message from the queue
     }
-
-
-
 }

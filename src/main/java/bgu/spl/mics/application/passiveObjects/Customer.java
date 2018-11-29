@@ -1,6 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import jdk.internal.net.http.common.Pair;
+import javafx.util.Pair;
 import java.util.List;
 
 /**

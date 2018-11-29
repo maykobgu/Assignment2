@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
@@ -15,7 +17,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import jdk.internal.net.http.common.Pair;
+import javafx.util.Pair;
 
 /**
  * This is the Main class of the application. You should parse the input file,
@@ -26,7 +28,7 @@ public class BookStoreRunner {
     public static void main(String[] args) throws FileNotFoundException {
         int index = 0;
         JsonParser parser = new JsonParser();
-        String path = "/Users/meshiy/Downloads/input.json";
+        String path = "/Users/maykogan/Desktop/input.json";
         JsonArray initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
         JsonElement initialResources = parser.parse(getReader(path)).getAsJsonObject().get("initialResources").getAsJsonArray().get(0);
         JsonArray vehicles = initialResources.getAsJsonObject().get("vehicles").getAsJsonArray();
@@ -37,7 +39,6 @@ public class BookStoreRunner {
         JsonElement numOflogistics = getNumOfInstances(services, "logistics");
         JsonElement numOfresourcesService = getNumOfInstances(services, "resourcesService");
         JsonArray customers = services.getAsJsonObject().get("customers").getAsJsonArray();
-//	meshi
         BookInventoryInfo[] inventory = new BookInventoryInfo[initialInventory.size()];
         Inventory inv = new Inventory();
         for (int i = 0; i < initialInventory.size(); i++) {
@@ -74,10 +75,6 @@ public class BookStoreRunner {
             Customers[index] = customer;
             index++;
         }
-//        System.out.println(Customers[1].getOrderSchedule().get(0).getKey());
-//        System.out.println(Customers[1].getOrderSchedule().get(0).getValue());
-        //initialize inventory, first thing
-        //load the book info in the inventory
 
         //get numbers of customers from the json and crete webapi for each one of them
         //according to the json, create the micro services needed
