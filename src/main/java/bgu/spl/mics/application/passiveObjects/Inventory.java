@@ -15,7 +15,7 @@ package bgu.spl.mics.application.passiveObjects;
 
 public class Inventory {
     private static Inventory instance = null;
-	BookInventoryInfo[ ] inventory;
+	private BookInventoryInfo[ ] inventory;
 	/**
      * Retrieves the single instance of this class.
      */
