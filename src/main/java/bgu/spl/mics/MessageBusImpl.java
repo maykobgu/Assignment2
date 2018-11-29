@@ -1,18 +1,23 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.passiveObjects.Inventory;
+
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
  * Write your implementation here!
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
+    private static MessageBusImpl instance = null;
 
     /**
      * Retrieves the single instance of this class.
      */
     public static MessageBusImpl getInstance(){
-        // TODO Auto-generated method stub
-        return null;
+        if(instance == null) {
+            instance = new MessageBusImpl();
+        }
+        return instance;
     }
 
     @Override

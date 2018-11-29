@@ -18,9 +18,9 @@ import java.util.Queue;
 public class InventoryService extends MicroService {
     public BookInventoryInfo[] inventory;
 
-    public InventoryService() {
-        super("Change_This_Name");
-        // TODO Implement this
+    public InventoryService(BookInventoryInfo[] inventory) {
+        super("InventoryService");
+        this.inventory = inventory;
     }
 
     @Override

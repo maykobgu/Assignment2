@@ -18,7 +18,6 @@ public class Customer {
     private List<OrderReceipt> receipts;
     private int creditCard;
     private int availableAmountInCreditCard;
-    private APIService apiService;
 
 	public Customer(int id, String name, String address, int distance, int creditCard, int availableAmountInCreditCard){
 	    this.id = id;
@@ -27,7 +26,6 @@ public class Customer {
 	    this.distance = distance;
 	    this.creditCard = creditCard;
 	    this.availableAmountInCreditCard = availableAmountInCreditCard;
-	    apiService = new APIService();
     }
 	/**
      * Retrieves the name of the customer.
