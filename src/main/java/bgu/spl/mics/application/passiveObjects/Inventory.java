@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
-
 /**
  * Passive data-object representing the store inventory.
  * It holds a collection of {@link BookInventoryInfo} for all the
@@ -15,64 +14,79 @@ package bgu.spl.mics.application.passiveObjects;
 
 public class Inventory {
     private static Inventory instance = null;
-	private BookInventoryInfo[ ] inventory;
-	/**
+    private BookInventoryInfo[] inventory;
+
+    /**
      * Retrieves the single instance of this class.
      */
-	public static Inventory getInstance() {
-		//TODO: Implement this
-            if(instance == null) {
-                instance = new Inventory();
-            }
-            return instance;
+    public static Inventory getInstance() {
+        //TODO: Implement this
+        if (instance == null) {
+            instance = new Inventory();
         }
-	
-	/**
+        return instance;
+    }
+
+    /**
      * Initializes the store inventory. This method adds all the items given to the store
      * inventory.
      * <p>
-     * @param inventory 	Data structure containing all data necessary for initialization
-     * 						of the inventory.
+     *
+     * @param inventory Data structure containing all data necessary for initialization
+     *                  of the inventory.
      */
-	public void load (BookInventoryInfo[ ] inventory) {
-		this.inventory = inventory;
-	}
-	
-	/**
+    public void load(BookInventoryInfo[] inventory) {
+        this.inventory = inventory;
+    }
+
+    /**
      * Attempts to take one book from the store.
      * <p>
-     * @param book 		Name of the book to take from the store
-     * @return 	an {@link Enum} with options NOT_IN_STOCK and SUCCESSFULLY_TAKEN.
-     * 			The first should not change the state of the inventory while the 
-     * 			second should reduce by one the number of books of the desired type.
+     *
+     * @param book Name of the book to take from the store
+     * @return an {@link Enum} with options NOT_IN_STOCK and SUCCESSFULLY_TAKEN.
+     * The first should not change the state of the inventory while the
+     * second should reduce by one the number of books of the desired type.
      */
-	public OrderResult take (String book) {
-		
-		return null;
-	}
-	
-	
-	
-	/**
+    public OrderResult take(String book) {
+/*This method will attempt to take one book from the store. It receives the title of books to take.
+Its result is an enum which has the following value options:
+    NOT_IN_STOCK: which indicates that there were no books of this type in stock
+        (the store inventory should not be changed in this case)
+    SUCCESSFULLY_TAKEN: which means that the item was successfully taken
+        (the number books of this type should be reduced by one)*/
+        return null;
+    }
+
+
+    /**
      * Checks if a certain book is available in the inventory.
      * <p>
-     * @param book 		Name of the book.
+     *
+     * @param book Name of the book.
      * @return the price of the book if it is available, -1 otherwise.
      */
-	public int checkAvailabiltyAndGetPrice(String book) {
-		//TODO: Implement this
-		return -1;
-	}
-	
-	/**
-     * 
+    public int checkAvailabiltyAndGetPrice(String book) {
+        //TODO: Implement this
+        return -1;
+    }
+
+    /**
      * <p>
      * Prints to a file name @filename a serialized object HashMap<String,Integer> which is a Map of all the books in the inventory. The keys of the Map (type {@link String})
      * should be the titles of the books while the values (type {@link Integer}) should be
-     * their respective available amount in the inventory. 
+     * their respective available amount in the inventory.
      * This method is called by the main method in order to generate the output.
      */
-	public void printInventoryToFile(String filename){
-		//TODO: Implement this
-	}
+    public void printInventoryToFile(String filename) {
+        //TODO: Implement this
+    }
+
+    public int getPrice(String book) {
+        for (BookInventoryInfo object : inventory) {
+            if (object.getBookTitle().equals(book))
+                return object.getPrice();
+        }
+        return -1;
+    }
 }

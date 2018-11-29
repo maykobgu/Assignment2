@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import javafx.util.Pair;
+
 import java.util.List;
 
 /**
@@ -98,4 +99,8 @@ public class Customer {
         return orderSchedule;
     }
 
+    public void charge(int num) {
+        // TODO Implement this
+        availableAmountInCreditCard = availableAmountInCreditCard - num;
+    }
 }
