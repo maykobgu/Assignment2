@@ -3,7 +3,12 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Queue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * InventoryService is in charge of the book inventory and stock.
@@ -16,7 +21,7 @@ import java.util.Queue;
  */
 
 public class InventoryService extends MicroService {
-    public BookInventoryInfo[] inventory;
+    private BookInventoryInfo[] inventory;
 
     public InventoryService(BookInventoryInfo[] inventory) {
         super("InventoryService");
@@ -26,6 +31,5 @@ public class InventoryService extends MicroService {
     @Override
     protected void initialize() {
         // TODO Implement this
-
     }
 }
