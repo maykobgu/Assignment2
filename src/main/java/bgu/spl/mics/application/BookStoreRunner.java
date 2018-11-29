@@ -29,19 +29,19 @@ public class BookStoreRunner {
     public static void main(String[] args) throws FileNotFoundException {
         int index = 0;
         JsonParser parser = new JsonParser();
-        String path = "/Users/maykogan/Desktop/input.json";
-        JsonElement initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
+        String path = "/Users/meshiy/Downloads/input.json";
+        JsonArray initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
         JsonElement initialResources = parser.parse(getReader(path)).getAsJsonObject().get("initialResources").getAsJsonArray().get(0);
         JsonArray vehicles = initialResources.getAsJsonObject().get("vehicles").getAsJsonArray();
         JsonElement services = parser.parse(getReader(path)).getAsJsonObject().get("services").getAsJsonObject();
-        JsonElement time = services.getAsJsonObject().get("time").getAsJsonObject();
+        JsonObject time = services.getAsJsonObject().get("time").getAsJsonObject();
         JsonElement numOfSelling = getNumOfInstances(services, "selling");
         JsonElement numOfinventoryService = getNumOfInstances(services, "inventoryService");
         JsonElement numOflogistics = getNumOfInstances(services, "logistics");
         JsonElement numOfresourcesService = getNumOfInstances(services, "resourcesService");
         JsonArray customers = services.getAsJsonObject().get("customers").getAsJsonArray();
 
-        BookInventoryInfo[] inventory = new BookInventoryInfo[((JsonArray) initialInventory).size()];
+        BookInventoryInfo[] inventory = new BookInventoryInfo[initialInventory.size()];
         Inventory inv = new Inventory();
         for (int i = 0; i < ((JsonArray) initialInventory).size(); i++) {
             String bookTitle = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("bookTitle").getAsString();
@@ -79,6 +79,11 @@ public class BookStoreRunner {
         }
 //        System.out.println(Customers[1].getOrderSchedule().get(0).getKey());
 //        System.out.println(Customers[1].getOrderSchedule().get(0).getValue());
+        //initialize inventory, first thing
+        //load the book info in the inventory
+
+        //get numbers of customers from the json and crete webapi for each one of them
+        //according to the json, create the micro services needed
     }
 
     private static JsonElement getNumOfInstances(JsonElement services, String field) {

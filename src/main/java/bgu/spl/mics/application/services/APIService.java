@@ -15,9 +15,9 @@ import bgu.spl.mics.application.passiveObjects.Customer;
 public class APIService extends MicroService {
     private Customer customer;
 
-    public APIService() {
-        super("Change_This_Name");
-        // TODO Implement this
+    public APIService(Customer customer) {
+        super("APIService");
+        this.customer = customer;
     }
 
     @Override
