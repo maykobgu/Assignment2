@@ -31,7 +31,6 @@ public class Future<T> {
 		//TODO: implement this.
 		return null;
 	}
-//	meshi
 	/**
      * Resolves the result of this Future object.
      */
