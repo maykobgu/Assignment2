@@ -13,6 +13,7 @@ import bgu.spl.mics.application.passiveObjects.Customer;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class APIService extends MicroService {
+    private Customer customer;
 
     public APIService() {
         super("Change_This_Name");
