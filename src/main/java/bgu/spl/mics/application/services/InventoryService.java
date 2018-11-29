@@ -1,14 +1,15 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Event;
+import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
+import bgu.spl.mics.application.messages.CheckAvailability;
+import bgu.spl.mics.application.passiveObjects.Inventory;
+import bgu.spl.mics.application.passiveObjects.OrderReceipt;
+import bgu.spl.mics.application.passiveObjects.OrderResult;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Queue;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
+import static bgu.spl.mics.application.passiveObjects.OrderResult.*;
+
 
 /**
  * InventoryService is in charge of the book inventory and stock.
@@ -21,15 +22,36 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class InventoryService extends MicroService {
-    private BookInventoryInfo[] inventory;
+    private Inventory inventory = Inventory.getInstance();
 
-    public InventoryService(BookInventoryInfo[] inventory) {
+    public InventoryService() {
         super("InventoryService");
-        this.inventory = inventory;
     }
 
     @Override
     protected void initialize() {
         // TODO Implement this
+        subscribeEvent(CheckAvailability.class, this::processEvent);
+    }
+
+    private void processEvent(CheckAvailability e) {
+        boolean taken = false;
+        int result = inventory.checkAvailabiltyAndGetPrice(e.getBook());
+        if (result != -1) {
+            if (e.getCustomer().getAvailableCreditAmount() >= result) {
+                OrderResult orderResult = inventory.take(e.getBook()); //attempt to take book
+                if (orderResult == SUCCESSFULLY_TAKEN) {
+                    OrderReceipt receipt = new OrderReceipt(0, e.getCustomer().getName(), e.getCustomer().getId(),
+                            e.getBook(), inventory.getPrice(e.getBook()), 0, 0, 0);
+                    //make receipt
+                    e.getCustomer().getCustomerReceiptList().add(receipt);  //added the receipt to customer receipts list
+                    e.getCustomer().charge(inventory.getPrice(e.getBook()));  //charge the customer for this book
+                    taken = true;
+                    //TODO change all the zeroes
+                    //TODO add receipt to money register - pass by the messagebus with future as result
+                }
+            }
+        }
+        this.complete((Event) e, taken);
     }
 }

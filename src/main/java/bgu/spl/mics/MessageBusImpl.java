@@ -14,7 +14,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class MessageBusImpl implements MessageBus {
     private static MessageBusImpl instance = null;
-    HashMap<MicroService, ArrayBlockingQueue<Message>> queues;
+    private HashMap<MicroService, ArrayBlockingQueue<Message>> queues;
 
     /**
      * Retrieves the single instance of this class.
@@ -40,8 +40,6 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> void complete(Event<T> e, T result) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -54,7 +52,6 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
         // TODO Auto-generated method stub
-
 //        inserts a message to the queue
         return null;
     }

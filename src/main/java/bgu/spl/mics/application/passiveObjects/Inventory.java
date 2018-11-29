@@ -82,5 +82,11 @@ Its result is an enum which has the following value options:
         //TODO: Implement this
     }
 
-    public int getPrice(String bo)
+    public int getPrice(String book) {
+        for (BookInventoryInfo object : inventory) {
+            if (object.getBookTitle().equals(book))
+                return object.getPrice();
+        }
+        return -1;
+    }
 }

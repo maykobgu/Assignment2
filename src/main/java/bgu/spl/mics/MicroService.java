@@ -97,7 +97,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
         //TODO: implement this.
-        return null; //TODO: delete this line :)
+        return e.getFuture();
     }
 
     /**
@@ -123,7 +123,7 @@ public abstract class MicroService implements Runnable {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-        //TODO: implement this.
+        e.getFuture().resolve(result);
     }
 
     /**
@@ -155,6 +155,11 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         messageBus.register(this);
         initialize();
+//        try {
+//            messageBus.awaitMessage(this);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         while (!terminated) {
             System.out.println("NOT IMPLEMENTED!!!"); //TODO: you should delete this line :)
         }
