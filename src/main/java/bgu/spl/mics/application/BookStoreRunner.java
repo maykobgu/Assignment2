@@ -26,23 +26,23 @@ public class BookStoreRunner {
         int index = 0;
         JsonParser parser = new JsonParser();
         String path = "/Users/meshiy/Downloads/input.json";
-        JsonElement initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
+        JsonArray initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
         JsonElement initialResources = parser.parse(getReader(path)).getAsJsonObject().get("initialResources").getAsJsonArray().get(0);
         JsonArray vehicles = initialResources.getAsJsonObject().get("vehicles").getAsJsonArray();
         JsonElement services = parser.parse(getReader(path)).getAsJsonObject().get("services").getAsJsonObject();
-        JsonElement time = services.getAsJsonObject().get("time").getAsJsonObject();
+        JsonObject time = services.getAsJsonObject().get("time").getAsJsonObject();
         JsonElement numOfSelling = getNumOfInstances(services, "selling");
         JsonElement numOfinventoryService = getNumOfInstances(services, "inventoryService");
         JsonElement numOflogistics = getNumOfInstances(services, "logistics");
         JsonElement numOfresourcesService = getNumOfInstances(services, "resourcesService");
         JsonArray customers = services.getAsJsonObject().get("customers").getAsJsonArray();
 
-        BookInventoryInfo[] inventory = new BookInventoryInfo[((JsonArray) initialInventory).size()];
+        BookInventoryInfo[] inventory = new BookInventoryInfo[initialInventory.size()];
         Inventory inv = new Inventory();
-        for (int i =0; i < ((JsonArray) initialInventory).size(); i++ ) {
-            String bookTitle = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("bookTitle").getAsString();
-            int amountInInventory = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("amount").getAsInt();
-            int price = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("price").getAsInt();
+        for (int i =0; i < initialInventory.size(); i++ ) {
+            String bookTitle = initialInventory.get(i).getAsJsonObject().get("bookTitle").getAsString();
+            int amountInInventory = initialInventory.get(i).getAsJsonObject().get("amount").getAsInt();
+            int price = initialInventory.get(i).getAsJsonObject().get("price").getAsInt();
             inventory[i] = new BookInventoryInfo(bookTitle, amountInInventory, price);
         }
         inv.load(inventory);
@@ -53,8 +53,7 @@ public class BookStoreRunner {
             vehiclesList[i] = new DeliveryVehicle (license,  speed);
         }
         ResourcesHolder rh = new ResourcesHolder(vehiclesList);
-        System.out.println(((JsonObject) time).get("speed").getAsString());
-        TimeService tickTime = new TimeService(((JsonObject) time).get("speed").getAsInt(), ((JsonObject) time).get("duration").getAsInt());
+        TimeService tickTime = new TimeService(time.get("speed").getAsInt(), time.get("duration").getAsInt());
 
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
@@ -67,6 +66,7 @@ public class BookStoreRunner {
             Object creditCardamount = creditCard.getAsJsonObject().get("amount");
             Customer customer = new Customer((int) id, (String) name, (String) address, (int) distance, (int) creditCardamount, (int) creditCardamount);
             Customers[index] = customer;
+            index++;
         }
         //initialize inventory, first thing
         //load the book info in the inventory
