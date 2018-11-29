@@ -39,7 +39,7 @@ public class BookStoreRunner {
 
         BookInventoryInfo[] inventory = new BookInventoryInfo[((JsonArray) initialInventory).size()];
         Inventory inv = new Inventory();
-        for (int i =0; i < ((JsonArray) initialInventory).size(); i++ ) {
+        for (int i = 0; i < ((JsonArray) initialInventory).size(); i++) {
             String bookTitle = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("bookTitle").getAsString();
             int amountInInventory = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("amount").getAsInt();
             int price = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("price").getAsInt();
@@ -47,26 +47,25 @@ public class BookStoreRunner {
         }
         inv.load(inventory);
         DeliveryVehicle[] vehiclesList = new DeliveryVehicle[vehicles.size()];
-        for (int i =0; i < vehicles.size(); i++ ){
+        for (int i = 0; i < vehicles.size(); i++) {
             int license = vehicles.get(i).getAsJsonObject().get("license").getAsInt();
             int speed = vehicles.get(i).getAsJsonObject().get("speed").getAsInt();
-            vehiclesList[i] = new DeliveryVehicle (license,  speed);
+            vehiclesList[i] = new DeliveryVehicle(license, speed);
         }
         ResourcesHolder rh = new ResourcesHolder(vehiclesList);
-        System.out.println(((JsonObject) time).get("speed").getAsString());
         TimeService tickTime = new TimeService(((JsonObject) time).get("speed").getAsInt(), ((JsonObject) time).get("duration").getAsInt());
-
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
-            Object id = element.getAsJsonObject().get("id");
-            Object name = element.getAsJsonObject().get("name");
-            Object address = element.getAsJsonObject().get("address");
-            Object distance = element.getAsJsonObject().get("distance");
+            int id = element.getAsJsonObject().get("id").getAsInt();
+            String name = element.getAsJsonObject().get("name").getAsString();
+            String address = element.getAsJsonObject().get("address").getAsString();
+            int distance = element.getAsJsonObject().get("distance").getAsInt();
             JsonElement creditCard = element.getAsJsonObject().get("creditCard");
-            Object creditCardnumber = creditCard.getAsJsonObject().get("number");
-            Object creditCardamount = creditCard.getAsJsonObject().get("amount");
-            Customer customer = new Customer((int) id, (String) name, (String) address, (int) distance, (int) creditCardamount, (int) creditCardamount);
+            int creditCardNumber = creditCard.getAsJsonObject().get("number").getAsInt();
+            int creditCardAmount = creditCard.getAsJsonObject().get("amount").getAsInt();
+            Customer customer = new Customer(id, name, address, distance, creditCardNumber, creditCardAmount);
             Customers[index] = customer;
+            index++;
         }
         //initialize inventory, first thing
         //load the book info in the inventory
