@@ -34,7 +34,7 @@ public class OrderReceipt {
      */
     public int getOrderId() {
         // TODO Implement this
-        return 0;
+        return orderId;
     }
 
     /**
@@ -42,7 +42,7 @@ public class OrderReceipt {
      */
     public String getSeller() {
         // TODO Implement this
-        return null;
+        return seller;
     }
 
     /**
@@ -53,7 +53,7 @@ public class OrderReceipt {
      */
     public int getCustomerId() {
         // TODO Implement this
-        return 0;
+        return customer;
     }
 
     /**
@@ -61,7 +61,7 @@ public class OrderReceipt {
      */
     public String getBookTitle() {
         // TODO Implement this
-        return null;
+        return bookTitle;
     }
 
     /**
@@ -69,7 +69,7 @@ public class OrderReceipt {
      */
     public int getPrice() {
         // TODO Implement this
-        return 0;
+        return price;
     }
 
     /**
@@ -77,7 +77,7 @@ public class OrderReceipt {
      */
     public int getIssuedTick() {
         // TODO Implement this
-        return 0;
+        return issuedTick;
     }
 
     /**
@@ -85,7 +85,7 @@ public class OrderReceipt {
      */
     public int getOrderTick() {
         // TODO Implement this
-        return 0;
+        return orderTick;
     }
 
     /**
@@ -94,6 +94,6 @@ public class OrderReceipt {
      */
     public int getProcessTick() {
         // TODO Implement this
-        return 0;
+        return proccessTick;
     }
 }
