@@ -1,8 +1,6 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.passiveObjects.Inventory;
-import javafx.util.Pair;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -14,7 +12,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class MessageBusImpl implements MessageBus {
     private static MessageBusImpl instance = null;
-    HashMap<MicroService, ArrayBlockingQueue<Message>> queues;
+    private HashMap<MicroService, ArrayBlockingQueue<Message>> queues;
 
     /**
      * Retrieves the single instance of this class.
@@ -75,7 +73,7 @@ public class MessageBusImpl implements MessageBus {
     public Message awaitMessage(MicroService m) throws InterruptedException {
         // TODO Auto-generated method stub
         ArrayBlockingQueue mqueue = queues.get(m);
-        while (mqueue.isEmpty()) ;  //waits for message to be available
+        while (mqueue.isEmpty());  //waits for message to be available
         return (Message) mqueue.poll();  //takes a message from the queue
     }
 }
