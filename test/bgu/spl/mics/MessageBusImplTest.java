@@ -11,24 +11,11 @@ import static org.junit.Assert.*;
 
 
 public class MessageBusImplTest {
-    MessageBusImpl bus;
-    MicroService api;
-    MicroService inventory;
-    MicroService logistic;
-    MicroService resource;
-    MicroService selling;
-    MicroService time;
-    Queue queue;
+
 
     @Before
     public void setUp() {
-        bus = new MessageBusImpl();
-        api = new APIService();
-        inventory = new InventoryService();
-        logistic = new LogisticsService();
-        resource = new ResourceService();
-        selling = new SellingService();
-        time = new TimeService();
+
     }
 
     @Test
@@ -62,10 +49,5 @@ public class MessageBusImplTest {
 
     @Test
     public void awaitMessage() throws Exception {
-    }
-
-    @After
-    public void tearDown() {
-        bus = null;
     }
 }

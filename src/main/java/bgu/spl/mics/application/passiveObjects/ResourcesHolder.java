@@ -14,7 +14,7 @@ import java.util.List;
  * You can add ONLY private methods and fields to this class.
  */
 public class ResourcesHolder {
-    DeliveryVehicle[] vehicles; //Holds a collection of DeliveryVehicle
+    private DeliveryVehicle[] vehicles; //Holds a collection of DeliveryVehicle
 
 
     public ResourcesHolder(DeliveryVehicle[] vehicles) {
