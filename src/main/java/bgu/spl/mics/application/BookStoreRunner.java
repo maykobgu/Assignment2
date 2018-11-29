@@ -2,13 +2,10 @@ package bgu.spl.mics.application;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import org.json.simple.JSONArray;
 
 /**
  * This is the Main class of the application. You should parse the input file,
@@ -29,7 +26,11 @@ public class BookStoreRunner {
         JsonElement numOflogistics = getNumOfInstances(services, "logistics");
         JsonElement numOfresourcesService = getNumOfInstances(services, "resourcesService");
         JsonArray customers = services.getAsJsonObject().get("customers").getAsJsonArray();
-
+        //initialize inventory, first thing
+        //load the book info in the inventory
+        //get numbers of customers from the json and crete webapi for each one of them
+        //according to the json, create the micro services needed
+        //create timeservice (singelton)
     }
 
     private static JsonElement getNumOfInstances(JsonElement services, String field) {
