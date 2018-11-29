@@ -3,11 +3,8 @@ package bgu.spl.mics.application;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
 import bgu.spl.mics.application.passiveObjects.Customer;
-
 import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.Inventory;
