@@ -2,6 +2,9 @@ package bgu.spl.mics.application;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import bgu.spl.mics.application.passiveObjects.Customer;
 
@@ -15,6 +18,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import javafx.util.Pair;
 
 /**
  * This is the Main class of the application. You should parse the input file,
@@ -39,35 +43,42 @@ public class BookStoreRunner {
 
         BookInventoryInfo[] inventory = new BookInventoryInfo[initialInventory.size()];
         Inventory inv = new Inventory();
-        for (int i =0; i < initialInventory.size(); i++ ) {
-            String bookTitle = initialInventory.get(i).getAsJsonObject().get("bookTitle").getAsString();
-            int amountInInventory = initialInventory.get(i).getAsJsonObject().get("amount").getAsInt();
-            int price = initialInventory.get(i).getAsJsonObject().get("price").getAsInt();
+        for (int i = 0; i < ((JsonArray) initialInventory).size(); i++) {
+            String bookTitle = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("bookTitle").getAsString();
+            int amountInInventory = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("amount").getAsInt();
+            int price = ((JsonArray) initialInventory).get(i).getAsJsonObject().get("price").getAsInt();
             inventory[i] = new BookInventoryInfo(bookTitle, amountInInventory, price);
         }
         inv.load(inventory);
         DeliveryVehicle[] vehiclesList = new DeliveryVehicle[vehicles.size()];
-        for (int i =0; i < vehicles.size(); i++ ){
+        for (int i = 0; i < vehicles.size(); i++) {
             int license = vehicles.get(i).getAsJsonObject().get("license").getAsInt();
             int speed = vehicles.get(i).getAsJsonObject().get("speed").getAsInt();
-            vehiclesList[i] = new DeliveryVehicle (license,  speed);
+            vehiclesList[i] = new DeliveryVehicle(license, speed);
         }
         ResourcesHolder rh = new ResourcesHolder(vehiclesList);
-        TimeService tickTime = new TimeService(time.get("speed").getAsInt(), time.get("duration").getAsInt());
-
+        TimeService tickTime = new TimeService(((JsonObject) time).get("speed").getAsInt(), ((JsonObject) time).get("duration").getAsInt());
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
-            Object id = element.getAsJsonObject().get("id");
-            Object name = element.getAsJsonObject().get("name");
-            Object address = element.getAsJsonObject().get("address");
-            Object distance = element.getAsJsonObject().get("distance");
+            int id = element.getAsJsonObject().get("id").getAsInt();
+            String name = element.getAsJsonObject().get("name").getAsString();
+            String address = element.getAsJsonObject().get("address").getAsString();
+            int distance = element.getAsJsonObject().get("distance").getAsInt();
             JsonElement creditCard = element.getAsJsonObject().get("creditCard");
-            Object creditCardnumber = creditCard.getAsJsonObject().get("number");
-            Object creditCardamount = creditCard.getAsJsonObject().get("amount");
-            Customer customer = new Customer((int) id, (String) name, (String) address, (int) distance, (int) creditCardamount, (int) creditCardamount);
+            int creditCardNumber = creditCard.getAsJsonObject().get("number").getAsInt();
+            int creditCardAmount = creditCard.getAsJsonObject().get("amount").getAsInt();
+            List<Pair<String, Integer>> orderSchedule = new ArrayList<>();
+            JsonArray orderScheduleFromJson = element.getAsJsonObject().get("orderSchedule").getAsJsonArray();
+            for (JsonElement os : orderScheduleFromJson) {
+                Pair<String, Integer> pair = new Pair<>(os.getAsJsonObject().get("bookTitle").getAsString(), os.getAsJsonObject().get("tick").getAsInt());
+                orderSchedule.add(pair);
+            }
+            Customer customer = new Customer(id, name, address, distance, creditCardNumber, creditCardAmount, orderSchedule);
             Customers[index] = customer;
             index++;
         }
+//        System.out.println(Customers[1].getOrderSchedule().get(0).getKey());
+//        System.out.println(Customers[1].getOrderSchedule().get(0).getValue());
         //initialize inventory, first thing
         //load the book info in the inventory
 
