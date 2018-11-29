@@ -2,6 +2,9 @@ package bgu.spl.mics.application;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import bgu.spl.mics.application.passiveObjects.Customer;
 
@@ -15,6 +18,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import javafx.util.Pair;
 
 /**
  * This is the Main class of the application. You should parse the input file,
@@ -63,14 +67,18 @@ public class BookStoreRunner {
             JsonElement creditCard = element.getAsJsonObject().get("creditCard");
             int creditCardNumber = creditCard.getAsJsonObject().get("number").getAsInt();
             int creditCardAmount = creditCard.getAsJsonObject().get("amount").getAsInt();
-            Customer customer = new Customer(id, name, address, distance, creditCardNumber, creditCardAmount);
+            List<Pair<String, Integer>> orderSchedule = new ArrayList<>();
+            JsonArray orderScheduleFromJson = element.getAsJsonObject().get("orderSchedule").getAsJsonArray();
+            for (JsonElement os : orderScheduleFromJson) {
+                Pair<String, Integer> pair = new Pair<>(os.getAsJsonObject().get("bookTitle").getAsString(), os.getAsJsonObject().get("tick").getAsInt());
+                orderSchedule.add(pair);
+            }
+            Customer customer = new Customer(id, name, address, distance, creditCardNumber, creditCardAmount, orderSchedule);
             Customers[index] = customer;
             index++;
         }
-        //initialize inventory, first thing
-        //load the book info in the inventory
-        //get numbers of customers from the json and crete webapi for each one of them
-        //according to the json, create the micro services needed
+//        System.out.println(Customers[1].getOrderSchedule().get(0).getKey());
+//        System.out.println(Customers[1].getOrderSchedule().get(0).getValue());
     }
 
     private static JsonElement getNumOfInstances(JsonElement services, String field) {
