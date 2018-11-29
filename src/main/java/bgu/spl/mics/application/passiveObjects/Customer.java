@@ -10,12 +10,28 @@ import java.util.List;
  */
 public class Customer {
 
+	private int id;
+    private String name;
+    private String address;
+    private int distance;
+    private List<OrderReceipt> receipts;
+    private int creditCard;
+    private int availableAmountInCreditCard;
+
+	public Customer(int id, String name, String address, int distance, int creditCard, int availableAmountInCreditCard){
+	    this.id = id;
+	    this.name = name;
+	    this.address = address;
+	    this.distance = distance;
+	    this.creditCard = creditCard;
+	    this.availableAmountInCreditCard = availableAmountInCreditCard;
+    }
 	/**
      * Retrieves the name of the customer.
      */
 	public String getName() {
 		// TODO Implement this
-		return null;
+		return name;
 	}
 
 	/**
@@ -23,7 +39,7 @@ public class Customer {
      */
 	public int getId() {
 		// TODO Implement this
-		return 0;
+		return id;
 	}
 	
 	/**
@@ -31,7 +47,7 @@ public class Customer {
      */
 	public String getAddress() {
 		// TODO Implement this
-		return null;
+		return address;
 	}
 	
 	/**
@@ -39,7 +55,7 @@ public class Customer {
      */
 	public int getDistance() {
 		// TODO Implement this
-		return 0;
+		return distance;
 	}
 
 	
@@ -50,7 +66,7 @@ public class Customer {
      */
 	public List<OrderReceipt> getCustomerReceiptList() {
 		// TODO Implement this
-		return null;
+		return receipts;
 	}
 	
 	/**
@@ -60,7 +76,7 @@ public class Customer {
      */
 	public int getAvailableCreditAmount() {
 		// TODO Implement this
-		return 0;
+		return availableAmountInCreditCard;
 	}
 	
 	/**
@@ -68,7 +84,7 @@ public class Customer {
      */
 	public int getCreditNumber() {
 		// TODO Implement this
-		return 0;
+		return creditCard;
 	}
 	
 }

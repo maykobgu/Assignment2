@@ -5,10 +5,8 @@ import java.io.FileReader;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import org.json.simple.JSONArray;
 
 /**
  * This is the Main class of the application. You should parse the input file,
