@@ -52,7 +52,7 @@ public class BookStoreRunner {
         ResourcesHolder rh = new ResourcesHolder(vehiclesList);
         System.out.println(((JsonObject) time).get("speed").getAsString());
         TimeService tickTime = new TimeService(((JsonObject) time).get("speed").getAsInt(), ((JsonObject) time).get("duration").getAsInt());
-        
+
         //get numbers of customers from the json and crete webapi for each one of them
         //according to the json, create the micro services needed
     }
