@@ -2,6 +2,8 @@ package bgu.spl.mics.application;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+
+import bgu.spl.mics.application.passiveObjects.Customer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -14,6 +16,7 @@ import com.google.gson.stream.JsonReader;
  */
 public class BookStoreRunner {
     public static void main(String[] args) throws FileNotFoundException {
+        int index = 0;
         JsonParser parser = new JsonParser();
         String path = "/Users/maykogan/Desktop/input.json";
         JsonElement initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
@@ -26,6 +29,18 @@ public class BookStoreRunner {
         JsonElement numOflogistics = getNumOfInstances(services, "logistics");
         JsonElement numOfresourcesService = getNumOfInstances(services, "resourcesService");
         JsonArray customers = services.getAsJsonObject().get("customers").getAsJsonArray();
+        Customer[] Customers = new Customer[customers.size()];
+        for (JsonElement element : customers) {
+            Object id = element.getAsJsonObject().get("id");
+            Object name = element.getAsJsonObject().get("name");
+            Object address = element.getAsJsonObject().get("address");
+            Object distance = element.getAsJsonObject().get("distance");
+            JsonElement creditCard = element.getAsJsonObject().get("creditCard");
+            Object creditCardnumber = creditCard.getAsJsonObject().get("number");
+            Object creditCardamount = creditCard.getAsJsonObject().get("amount");
+            Customer customer = new Customer((int) id, (String) name, (String) address, (int) distance, (int) creditCardamount, (int) creditCardamount);
+            Customers[index] = customer;
+        }
         //initialize inventory, first thing
         //load the book info in the inventory
         //get numbers of customers from the json and crete webapi for each one of them

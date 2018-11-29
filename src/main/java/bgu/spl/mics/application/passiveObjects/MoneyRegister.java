@@ -13,7 +13,7 @@ import java.util.List;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 public class MoneyRegister {
-    protected List<OrderReceipt> receiptlist;
+    private List<OrderReceipt> receiptlist;
 
     /**
      * Retrieves the single instance of this class.
