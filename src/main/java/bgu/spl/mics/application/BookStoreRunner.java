@@ -37,7 +37,7 @@ public class BookStoreRunner {
         JsonElement numOflogistics = getNumOfInstances(services, "logistics");
         JsonElement numOfresourcesService = getNumOfInstances(services, "resourcesService");
         JsonArray customers = services.getAsJsonObject().get("customers").getAsJsonArray();
-
+//	meshi
         BookInventoryInfo[] inventory = new BookInventoryInfo[initialInventory.size()];
         Inventory inv = new Inventory();
         for (int i = 0; i < initialInventory.size(); i++) {
