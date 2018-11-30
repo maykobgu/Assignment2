@@ -13,14 +13,18 @@ import java.util.List;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 public class MoneyRegister {
+    private static MoneyRegister instance = null;
     private List<OrderReceipt> receiptlist;
+    private int TotalEarnings = 0;
 
     /**
      * Retrieves the single instance of this class.
      */
     public static MoneyRegister getInstance() {
-        //TODO: Implement this
-        return null;
+        if (instance == null) {
+            instance = new MoneyRegister();
+        }
+        return instance;
     }
 
     /**
@@ -39,7 +43,7 @@ public class MoneyRegister {
      */
     public int getTotalEarnings() {
         //TODO: Implement this
-        return 0;
+        return TotalEarnings;
     }
 
     /**
@@ -49,7 +53,7 @@ public class MoneyRegister {
      * @param amount amount to charge
      */
     public void chargeCreditCard(Customer c, int amount) {
-        // TODO Implement this
+        TotalEarnings = TotalEarnings +  amount;
         c.charge(amount);
     }
 
