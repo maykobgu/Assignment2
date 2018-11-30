@@ -1,5 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Passive data-object representing a delivery vehicle of the store.
  * You must not alter any of the given public methods of this class.
@@ -39,7 +41,9 @@ public class DeliveryVehicle {
      * @param address	The address of the customer.
      * @param distance	The distance from the store to the customer.
      */
-	public void deliver(String address, int distance) {
-		// TODO Implement this
+	public void deliver(String address, int distance) throws InterruptedException {
+		long deliveryDuration = distance/getSpeed();
+		sleep(deliveryDuration);
+		// TODO check this
 	}
 }

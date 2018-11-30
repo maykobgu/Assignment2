@@ -14,7 +14,7 @@ public class Customer {
     private int id;
     private String name;
     private String address;
-    private int distance;
+    private int distance; //must be in KM unit
     private List<OrderReceipt> receipts;
     private int creditCard;
     private int availableAmountInCreditCard;
