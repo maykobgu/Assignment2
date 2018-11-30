@@ -1,6 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import javafx.util.Pair;
+import jdk.internal.net.http.common.Pair;
 
 import java.util.List;
 
@@ -102,5 +102,9 @@ public class Customer {
     public void charge(int num) {
         // TODO Implement this
         availableAmountInCreditCard = availableAmountInCreditCard - num;
+    }
+    public void addReceipt(OrderReceipt receipt) {
+        // TODO Implement this
+        receipts.add(receipt);
     }
 }
