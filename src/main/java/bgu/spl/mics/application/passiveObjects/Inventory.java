@@ -49,15 +49,19 @@ public class Inventory {
      * second should reduce by one the number of books of the desired type.
      */
     public OrderResult take(String book) {
-/*This method will attempt to take one book from the store. It receives the title of books to take.
-Its result is an enum which has the following value options:
-    NOT_IN_STOCK: which indicates that there were no books of this type in stock
-        (the store inventory should not be changed in this case)
-    SUCCESSFULLY_TAKEN: which means that the item was successfully taken
-        (the number books of this type should be reduced by one)*/
-        return null;
+        boolean taken = false;
+        int result = checkAvailabiltyAndGetPrice(book);
+        if (result == -1) return OrderResult.NOT_IN_STOCK;
+        else {
+            for (int i = 0; i < inventory.length & !taken; i++) {
+                if (inventory[i].getBookTitle().equals(book)) {
+                    inventory[i].reduceAmountInInventory();
+                    taken = true;
+                }
+            }
+            return OrderResult.SUCCESSFULLY_TAKEN;
+        }
     }
-
 
     /**
      * Checks if a certain book is available in the inventory.
@@ -67,7 +71,12 @@ Its result is an enum which has the following value options:
      * @return the price of the book if it is available, -1 otherwise.
      */
     public int checkAvailabiltyAndGetPrice(String book) {
-        //TODO: Implement this
+        for (BookInventoryInfo b : inventory) {
+            if (b.getBookTitle().equals(book)) {
+                if (b.getAmountInInventory() > 0)
+                    return b.getPrice();
+            }
+        }
         return -1;
     }
 

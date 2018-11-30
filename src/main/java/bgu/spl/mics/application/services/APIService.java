@@ -1,8 +1,6 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.Event;
-import bgu.spl.mics.Future;
-import bgu.spl.mics.MicroService;
+import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.CheckAvailability;
 import bgu.spl.mics.application.messages.DeliveryEvent;
 import bgu.spl.mics.application.messages.OrderBookEvent;
@@ -15,6 +13,8 @@ import com.sun.tools.javac.util.Pair;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import com.sun.tools.javac.util.Pair;
+
+import java.util.HashMap;
 
 /**
  * APIService is in charge of the connection between a client and the store.
@@ -37,7 +37,7 @@ public class APIService extends MicroService {
 
     @Override
     protected void initialize() {
-        subscribeEvent(TickBroadcast.class, this::act);
+        subscribeBroadcast(TickBroadcast.class, this::act);
         time.run();
         for (Pair<String, Integer> book : customer.getOrderSchedule()) {
             OrderBookEvent order = new OrderBookEvent(customer, book.fst);
@@ -45,7 +45,7 @@ public class APIService extends MicroService {
             if (result != null) {
                 customer.addReceipt((OrderReceipt) result.get());
                 DeliveryEvent deliver = new DeliveryEvent(customer);
-                Future deliveryResult = sendEvent(deliver);
+                sendEvent(deliver); //does not need to wait
             }
 
         }
@@ -55,4 +55,6 @@ public class APIService extends MicroService {
     private void act(TickBroadcast e) {
 // TICKS
     }
+
+
 }

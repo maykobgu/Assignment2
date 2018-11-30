@@ -1,13 +1,14 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.Event;
-import bgu.spl.mics.Future;
-import bgu.spl.mics.MicroService;
+import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.CheckAvailability;
+import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import bgu.spl.mics.application.passiveObjects.OrderResult;
+
+import java.util.HashMap;
 
 import static bgu.spl.mics.application.passiveObjects.OrderResult.*;
 
@@ -24,8 +25,7 @@ import static bgu.spl.mics.application.passiveObjects.OrderResult.*;
 
 public class InventoryService extends MicroService {
     private Inventory inventory = Inventory.getInstance();
-    MoneyRegister moneyRegister = MoneyRegister.getInstance();
-
+    private MoneyRegister moneyRegister = MoneyRegister.getInstance();
 
     public InventoryService() {
         super("InventoryService");
@@ -35,6 +35,8 @@ public class InventoryService extends MicroService {
     protected void initialize() {
         // TODO Implement this
         subscribeEvent(CheckAvailability.class, this::processEvent);
+        subscribeBroadcast(TickBroadcast.class, this::act);
+
     }
 
     private void processEvent(CheckAvailability e) {
@@ -44,18 +46,18 @@ public class InventoryService extends MicroService {
             if (e.getCustomer().getAvailableCreditAmount() >= result) {
                 OrderResult orderResult = inventory.take(e.getBook()); //attempt to take book
                 if (orderResult == SUCCESSFULLY_TAKEN) {
-                    OrderReceipt receipt = new OrderReceipt(0, e.getCustomer().getName(), e.getCustomer().getId(),
-                            e.getBook(), inventory.getPrice(e.getBook()), 0, 0, 0);
-                    //make receipt
-                    e.getCustomer().getCustomerReceiptList().add(receipt);  //added the receipt to customer receipts list
+                    OrderReceipt receipt = MoneyRegister.createReceipt(e.getCustomer().getName(), e.getCustomer().getId(),
+                            e.getBook(), inventory.getPrice(e.getBook()), 0, 0, 0); //make receipt
                     moneyRegister.chargeCreditCard(e.getCustomer(), inventory.getPrice(e.getBook())); //charge the customer for this book
                     moneyRegister.file(receipt);
                     paid = receipt;
                     //TODO change all the zeroes
-                    //TODO delivery
                 }
             }
         }
         this.complete((Event) e, paid);
+    }
+
+    private void act(TickBroadcast e) {
     }
 }

@@ -71,7 +71,6 @@ public class Customer {
      * @return A list of receipts.
      */
     public List<OrderReceipt> getCustomerReceiptList() {
-        // TODO Implement this
         return receipts;
     }
 
@@ -82,7 +81,6 @@ public class Customer {
      * @return Amount of money left.
      */
     public int getAvailableCreditAmount() {
-        // TODO Implement this
         return availableAmountInCreditCard;
     }
 
@@ -90,21 +88,17 @@ public class Customer {
      * Retrieves this customers credit card serial number.
      */
     public int getCreditNumber() {
-        // TODO Implement this
         return creditCard;
     }
 
     public List<Pair<String, Integer>> getOrderSchedule() {
-        // TODO Implement this
         return orderSchedule;
     }
 
     public void charge(int num) {
-        // TODO Implement this
         availableAmountInCreditCard = availableAmountInCreditCard - num;
     }
     public void addReceipt(OrderReceipt receipt) {
-        // TODO Implement this
         receipts.add(receipt);
     }
 }
