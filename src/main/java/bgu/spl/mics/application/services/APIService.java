@@ -10,9 +10,7 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 import com.sun.tools.javac.util.Pair;
-import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
-import com.sun.tools.javac.util.Pair;
 
 /**
  * APIService is in charge of the connection between a client and the store.
@@ -39,8 +37,6 @@ public class APIService extends MicroService {
         for (Pair<String, Integer> book : customer.getOrderSchedule()) {
             OrderBookEvent order = new OrderBookEvent(customer, book.fst);
             Future result = sendEvent(order); //last result- book taken or not
-            OrderBookEvent order = new OrderBookEvent(customer, book.fst);
-            Future result = sendEvent(order); //last result- receipt or null
             if (result != null) {
                 customer.addReceipt((OrderReceipt) result.get());
                 DeliveryEvent deliver = new DeliveryEvent(customer);

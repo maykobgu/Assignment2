@@ -1,7 +1,9 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.Inventory;
+import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
 import java.util.Timer;
@@ -34,9 +36,11 @@ public class TimeService extends MicroService{
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-
+                TickBroadcast tickMessage = new TickBroadcast();
+                sendEvent(tickMessage);
             }
         };
+        time.schedule(task,  speed, duration);
     }
 
 }
