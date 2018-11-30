@@ -5,6 +5,7 @@ import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CheckAvailability;
 import bgu.spl.mics.application.passiveObjects.Inventory;
+import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import bgu.spl.mics.application.passiveObjects.OrderResult;
 
@@ -23,6 +24,8 @@ import static bgu.spl.mics.application.passiveObjects.OrderResult.*;
 
 public class InventoryService extends MicroService {
     private Inventory inventory = Inventory.getInstance();
+    MoneyRegister moneyRegister = MoneyRegister.getInstance();
+
 
     public InventoryService() {
         super("InventoryService");
@@ -35,7 +38,7 @@ public class InventoryService extends MicroService {
     }
 
     private void processEvent(CheckAvailability e) {
-        boolean taken = false;
+        OrderReceipt paid = null;
         int result = inventory.checkAvailabiltyAndGetPrice(e.getBook());
         if (result != -1) {
             if (e.getCustomer().getAvailableCreditAmount() >= result) {
@@ -45,13 +48,14 @@ public class InventoryService extends MicroService {
                             e.getBook(), inventory.getPrice(e.getBook()), 0, 0, 0);
                     //make receipt
                     e.getCustomer().getCustomerReceiptList().add(receipt);  //added the receipt to customer receipts list
-                    e.getCustomer().charge(inventory.getPrice(e.getBook()));  //charge the customer for this book
-                    taken = true;
+                    moneyRegister.chargeCreditCard(e.getCustomer(), inventory.getPrice(e.getBook())); //charge the customer for this book
+                    moneyRegister.file(receipt);
+                    paid = receipt;
                     //TODO change all the zeroes
-                    //TODO add receipt to money register - pass by the messagebus with future as result
+                    //TODO delivery
                 }
             }
         }
-        this.complete((Event) e, taken);
+        this.complete((Event) e, paid);
     }
 }
