@@ -54,7 +54,7 @@ public class BookStoreRunner {
             int speed = vehicles.get(i).getAsJsonObject().get("speed").getAsInt();
             vehiclesList[i] = new DeliveryVehicle(license, speed);
         }
-        ResourcesHolder rh = new ResourcesHolder(vehiclesList);
+//        ResourcesHolder rh = new ResourcesHolder(vehiclesList);
         TimeService tickTime = new TimeService(time.get("speed").getAsInt(), time.get("duration").getAsInt());
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
