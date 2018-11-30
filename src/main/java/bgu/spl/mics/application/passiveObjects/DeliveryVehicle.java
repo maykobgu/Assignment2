@@ -9,6 +9,7 @@ import static java.lang.Thread.sleep;
  * You may add ONLY private fields and methods to this class.
  */
 public class DeliveryVehicle {
+	private boolean available;
 	private int license;
 	private int speed;
 	/**
@@ -17,6 +18,7 @@ public class DeliveryVehicle {
 	 public DeliveryVehicle(int license, int speed) {
 		this.license = license;
 		this.speed = speed;
+		 available=true;
 	  }
 	/**
      * Retrieves the license of this delivery vehicle.   
@@ -43,7 +45,13 @@ public class DeliveryVehicle {
      */
 	public void deliver(String address, int distance) throws InterruptedException {
 		long deliveryDuration = distance/getSpeed();
+		available=false;
 		sleep(deliveryDuration);
+		available =true;
 		// TODO check this
+	}
+
+	public boolean isAvailable(){
+		return available;
 	}
 }

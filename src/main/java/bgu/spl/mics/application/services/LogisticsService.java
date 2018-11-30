@@ -2,6 +2,7 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.messages.AcquireVehicleEvent;
 import bgu.spl.mics.application.messages.DeliveryEvent;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
@@ -29,13 +30,7 @@ public class LogisticsService extends MicroService {
     }
 
     private void processEvent(DeliveryEvent e) {
-        Future result = ResourcesHolder.getInstance().acquireVehicle();
-        while (!result.isDone()) ;
-        if (result.get() != null) {
-            DeliveryVehicle vehicle = (DeliveryVehicle) result.get();
-            vehicle.deliver(e.getAdress(),e.getDistance());
-        }
-
+        AcquireVehicleEvent acq = new AcquireVehicleEvent(e);
+        Future result = sendEvent(acq);
     }
-
 }
