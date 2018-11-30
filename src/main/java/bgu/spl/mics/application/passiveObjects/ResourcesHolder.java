@@ -3,6 +3,7 @@ package bgu.spl.mics.application.passiveObjects;
 import bgu.spl.mics.Future;
 
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * Passive object representing the resource manager.
@@ -16,6 +17,7 @@ import java.util.List;
 public class ResourcesHolder {
     private static ResourcesHolder instance = null;
     private DeliveryVehicle[] vehicles; //Holds a collection of DeliveryVehicle
+    private Semaphore s = new Semaphore(vehicles.length, true);
 
     /**
      * Retrieves the single instance of this class.
@@ -36,16 +38,18 @@ public class ResourcesHolder {
      * @return {@link Future<DeliveryVehicle>} object which will resolve to a
      * {@link DeliveryVehicle} when completed.
      */
-    public Future<DeliveryVehicle> acquireVehicle() {
-        for (DeliveryVehicle vehicle : vehicles) {
-            if (vehicle.isAvailable()) {
-                Future result = new Future();
-                result.resolve(vehicle);
-                return result;
+    public Future<DeliveryVehicle> acquireVehicle() throws InterruptedException {
+        while (!s.tryAcquire()) ;
+        s.acquire();
+        Future result = null;
+        boolean found = false;
+        for (int i = 0; i < vehicles.length & !found; i++) {
+            if (vehicles[i].isAvailable()) {
+                result.resolve(vehicles[i]);
+                found = true;
             }
         }
-        //TODO: Implement this
-        return null;
+        return result;
     }
 
     /**
@@ -56,7 +60,7 @@ public class ResourcesHolder {
      * @param vehicle {@link DeliveryVehicle} to be released.
      */
     public void releaseVehicle(DeliveryVehicle vehicle) {
-        //TODO: Implement this
+        s.release();
     }
 
     /**
@@ -67,6 +71,5 @@ public class ResourcesHolder {
      */
     public void load(DeliveryVehicle[] vehicles) {
         this.vehicles = vehicles;
-        //TODO: Implement this
     }
 }

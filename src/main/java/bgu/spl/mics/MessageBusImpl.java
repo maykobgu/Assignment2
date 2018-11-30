@@ -33,7 +33,6 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -43,9 +42,7 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public void sendBroadcast(Broadcast b) {
         // TODO Auto-generated method stub
-
     }
-
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
