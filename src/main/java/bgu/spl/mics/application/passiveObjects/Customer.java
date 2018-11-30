@@ -1,7 +1,5 @@
 package bgu.spl.mics.application.passiveObjects;
 
-
-
 import com.sun.tools.javac.util.Pair;
 
 import java.util.List;
