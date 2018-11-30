@@ -16,6 +16,7 @@ public class MoneyRegister {
     private static MoneyRegister instance = null;
     private List<OrderReceipt> receiptlist;
     private int TotalEarnings = 0;
+    private static int counter = 0;
 
     /**
      * Retrieves the single instance of this class.
@@ -35,14 +36,12 @@ public class MoneyRegister {
      */
     public void file(OrderReceipt r) {
         receiptlist.add(r);
-        //TODO: Implement this.
     }
 
     /**
      * Retrieves the current total earnings of the store.
      */
     public int getTotalEarnings() {
-        //TODO: Implement this
         return TotalEarnings;
     }
 
@@ -53,7 +52,7 @@ public class MoneyRegister {
      * @param amount amount to charge
      */
     public void chargeCreditCard(Customer c, int amount) {
-        TotalEarnings = TotalEarnings +  amount;
+        TotalEarnings = TotalEarnings + amount;
         c.charge(amount);
     }
 
@@ -64,5 +63,11 @@ public class MoneyRegister {
      */
     public void printOrderReceipts(String filename) {
         //TODO: Implement this
+    }
+
+    public static OrderReceipt createReceipt(String seller, int customer, String bookTitle, int price, int issuedTick, int orderTick, int proccessTick) {
+        OrderReceipt receipt = new OrderReceipt(counter, seller, customer, bookTitle, price, issuedTick, orderTick, proccessTick);
+        counter++;
+        return receipt;
     }
 }

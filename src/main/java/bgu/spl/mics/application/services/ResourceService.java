@@ -1,10 +1,12 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.Future;
-import bgu.spl.mics.MicroService;
+import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.AcquireVehicleEvent;
+import bgu.spl.mics.application.messages.ReleaseVehicleEvent;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
+
+import java.util.HashMap;
 
 /**
  * ResourceService is in charge of the store resources - the delivery vehicles.
@@ -27,14 +29,15 @@ public class ResourceService extends MicroService {
     protected void initialize() {
         // TODO Implement this
         subscribeEvent(AcquireVehicleEvent.class, this::processEvent);
+        subscribeEvent(ReleaseVehicleEvent.class, this::releaseEvent);
     }
 
     private void processEvent(AcquireVehicleEvent e) throws InterruptedException {
         Future result = instance.acquireVehicle();
-        while (!result.isDone()) ;
-        if (result.get() != null) {
-            DeliveryVehicle vehicle = (DeliveryVehicle) result.get();
-            vehicle.deliver(e.getDeliveryEvent().getAdress(), e.getDeliveryEvent().getDistance());
-        }
+        complete((Event) e, result.get());
+    }
+
+    private void releaseEvent(ReleaseVehicleEvent e) {
+        instance.releaseVehicle(e.getVehicle());
     }
 }
