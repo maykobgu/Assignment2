@@ -29,5 +29,4 @@ public class TimeService extends MicroService{
 		Timer time = new Timer();
 		// TODO Implement this
 	}
-
 }

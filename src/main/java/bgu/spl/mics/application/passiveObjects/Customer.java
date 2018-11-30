@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import jdk.internal.net.http.common.Pair;
+
+
+import com.sun.tools.javac.util.Pair;
 
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class Customer {
     private int id;
     private String name;
     private String address;
-    private int distance;
+    private int distance; //must be in KM unit
     private List<OrderReceipt> receipts;
     private int creditCard;
     private int availableAmountInCreditCard;
