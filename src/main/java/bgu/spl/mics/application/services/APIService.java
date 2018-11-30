@@ -1,10 +1,12 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Event;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CheckAvailability;
 import bgu.spl.mics.application.messages.DeliveryEvent;
 import bgu.spl.mics.application.messages.OrderBookEvent;
+import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
@@ -33,6 +35,7 @@ public class APIService extends MicroService {
 
     @Override
     protected void initialize() {
+        subscribeEvent(TickBroadcast.class, this::act);
         time.run();
         for (Pair<String, Integer> book : customer.getOrderSchedule()) {
             OrderBookEvent order = new OrderBookEvent(customer, book.fst);
@@ -40,17 +43,14 @@ public class APIService extends MicroService {
             if (result != null) {
                 customer.addReceipt((OrderReceipt) result.get());
                 DeliveryEvent deliver = new DeliveryEvent(customer);
-                Future delvieryResult = sendEvent(deliver);
+                Future deliveryResult = sendEvent(deliver);
             }
 
         }
 //        subscribeEvent(CheckAvailability.class, this::processEvent);
     }
 
-    private void processEvent(CheckAvailability e) {
-//        int result = inventory.checkAvailabiltyAndGetPrice(e.getBook());
-//        if (result != -1)
-//            this.complete((Event) e, true);
-//        else this.complete((Event) e, false);
+    private void act(TickBroadcast e) {
+// TICKS
     }
 }

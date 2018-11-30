@@ -14,21 +14,19 @@ import java.util.List;
  * You can add ONLY private methods and fields to this class.
  */
 public class ResourcesHolder {
+    private static ResourcesHolder instance = null;
     private DeliveryVehicle[] vehicles; //Holds a collection of DeliveryVehicle
-
-
-    public ResourcesHolder(DeliveryVehicle[] vehicles) {
-        this.vehicles = vehicles;
-    }
-
 
     /**
      * Retrieves the single instance of this class.
      */
     public static ResourcesHolder getInstance() {
-        //TODO: Implement this
-        return null;
+        if (instance == null) {
+            instance = new ResourcesHolder();
+        }
+        return instance;
     }
+
 
     /**
      * Tries to acquire a vehicle and gives a future object which will
@@ -39,6 +37,13 @@ public class ResourcesHolder {
      * {@link DeliveryVehicle} when completed.
      */
     public Future<DeliveryVehicle> acquireVehicle() {
+        for (DeliveryVehicle vehicle : vehicles) {
+            if (vehicle.isAvailable()) {
+                Future result = new Future();
+                result.resolve(vehicle);
+                return result;
+            }
+        }
         //TODO: Implement this
         return null;
     }
@@ -61,7 +66,7 @@ public class ResourcesHolder {
      * @param vehicles Array of {@link DeliveryVehicle} instances to store.
      */
     public void load(DeliveryVehicle[] vehicles) {
+        this.vehicles = vehicles;
         //TODO: Implement this
     }
-
 }
