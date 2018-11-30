@@ -17,7 +17,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import javafx.util.Pair;
+import com.sun.tools.javac.util.Pair;
 
 /**
  * This is the Main class of the application. You should parse the input file,
@@ -55,7 +55,8 @@ public class BookStoreRunner {
             vehiclesList[i] = new DeliveryVehicle(license, speed);
         }
         ResourcesHolder rh = new ResourcesHolder(vehiclesList);
-        TimeService tickTime = new TimeService(time.get("speed").getAsInt(), time.get("duration").getAsInt());
+        int timeSpeed = time.get("speed").getAsInt();
+        int timeDuration = time.get("duration").getAsInt();
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
             int id = element.getAsJsonObject().get("id").getAsInt();
