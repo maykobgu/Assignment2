@@ -50,6 +50,7 @@ public class MoneyRegister {
      */
     public void chargeCreditCard(Customer c, int amount) {
         // TODO Implement this
+        c.charge(amount);
     }
 
     /**

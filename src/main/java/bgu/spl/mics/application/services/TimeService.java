@@ -2,6 +2,8 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
 
+import java.util.Timer;
+
 /**
  * TimeService is the global system timer There is only one instance of this micro-service.
  * It keeps track of the amount of ticks passed since initialization and notifies
@@ -21,9 +23,10 @@ public class TimeService extends MicroService{
 		this.speed = speed;
 		this.duration = duration;
 	}
-
+//use Timer class in java
 	@Override
 	protected void initialize() {
+		Timer time = new Timer();
 		// TODO Implement this
 	}
 

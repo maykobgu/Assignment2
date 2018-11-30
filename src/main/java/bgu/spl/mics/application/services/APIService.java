@@ -6,12 +6,14 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CheckAvailability;
 import bgu.spl.mics.application.messages.OrderBookEvent;
 import bgu.spl.mics.application.passiveObjects.Customer;
+import bgu.spl.mics.application.passiveObjects.MoneyRegister;
+import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import javafx.util.Pair;
 
 /**
  * APIService is in charge of the connection between a client and the store.
  * It informs the store about desired purchases using {@link BookOrderEvent}.
- * This class may not hold references for objects which it is not responsible for:
+ * This class may not hold references for ob,jects which it is not responsible for:
  * {@link ResourcesHolder}, {@link MoneyRegister}, {@link Inventory}.
  * <p>
  * You can add private fields and public methods to this class.
@@ -29,7 +31,10 @@ public class APIService extends MicroService {
     protected void initialize() {
         for (Pair<String, Integer> book : customer.getOrderSchedule()) {
             OrderBookEvent order = new OrderBookEvent(customer, book.getKey());
-            Future result = sendEvent(order); //last result- book taken or not
+            Future result = sendEvent(order); //last result- receipt or null
+            if (result != null) {
+                customer.addReceipt(result);
+            }
 
         }
 //        subscribeEvent(CheckAvailability.class, this::processEvent);
