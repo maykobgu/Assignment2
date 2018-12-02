@@ -175,8 +175,4 @@ public abstract class MicroService implements Runnable {
             System.out.println("NOT IMPLEMENTED!!!"); //TODO: you should delete this line :)
         }
     }
-
-    public HashMap<Message, Callback> getCallbacks(){
-        return callbacks;
-    }
 }
