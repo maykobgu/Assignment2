@@ -1,10 +1,6 @@
 package bgu.spl.mics;
-
-import bgu.spl.mics.application.passiveObjects.Inventory;
-
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -13,9 +9,8 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class MessageBusImpl implements MessageBus {
     private static MessageBusImpl instance = null;
-    private HashMap<MicroService, ArrayBlockingQueue<Message>> queues;
-    //maybe we need to save the name of the microservice instead of the microservice itself
-    private HashMap<Class, MicroService> eventMapping;
+    private ConcurrentHashMap<MicroService, ArrayBlockingQueue<Message>> queues; //maybe we need to save the name of the microservice instead of the microservice itself
+    private ConcurrentHashMap<Class, MicroService> eventMapping;
 
     /**
      * Retrieves the single instance of this class.

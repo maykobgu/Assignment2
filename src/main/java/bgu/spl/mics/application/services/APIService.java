@@ -14,8 +14,6 @@ import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import com.sun.tools.javac.util.Pair;
 
-import java.util.HashMap;
-
 /**
  * APIService is in charge of the connection between a client and the store.
  * It informs the store about desired purchases using {@link BookOrderEvent}.

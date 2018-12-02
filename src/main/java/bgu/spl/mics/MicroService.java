@@ -2,7 +2,7 @@ package bgu.spl.mics;
 
 import bgu.spl.mics.application.services.APIService;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The MicroService is an abstract class that any micro-service in the system
@@ -26,7 +26,7 @@ public abstract class MicroService implements Runnable {
     private MessageBusImpl messageBus = MessageBusImpl.getInstance();
     private boolean terminated = false;
     private final String name;
-    private HashMap<Class, Callback> callbacks;
+    private ConcurrentHashMap<Class, Callback> callbacks;
 
     //each micro-service has a field Hashmap<Message,callcabk>
     //when the await message gives a message we need to call the relevant callback using this hash map
