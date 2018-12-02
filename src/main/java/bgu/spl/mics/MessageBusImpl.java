@@ -1,6 +1,7 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.passiveObjects.Inventory;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -13,6 +14,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class MessageBusImpl implements MessageBus {
     private static MessageBusImpl instance = null;
     private HashMap<MicroService, ArrayBlockingQueue<Message>> queues;
+    //maybe we need to save the name of the microservice instead of the microservice itself
+    private HashMap<Class, MicroService> eventMapping;
 
     /**
      * Retrieves the single instance of this class.
@@ -26,8 +29,7 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-        // TODO Auto-generated method stub
-//        m.subscribeEvent(type,  );
+        eventMapping.put(type.getClass(), m);
     }
 
     @Override
@@ -37,6 +39,8 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> void complete(Event<T> e, T result) {
+        e.getFuture().resolve(result);
+        notifyAll();
     }
 
     @Override
@@ -46,28 +50,28 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-        // TODO Auto-generated method stub
-//        inserts a message to the queue
-        return null;
+        MicroService m = eventMapping.get(e.getClass());
+        if (m == null) return null;
+        queues.get(m).add(e);
+        while (e.getFuture().isDone()) ;
+        return e.getFuture();
     }
 
     @Override
     public void register(MicroService m) {
-        // TODO Auto-generated method stub
+        // TODO capacity?
         queues.put(m, new ArrayBlockingQueue<>(100));
     }
 
     @Override
     public void unregister(MicroService m) {
-        // TODO Auto-generated method stub
         queues.remove(m);
     }
 
     @Override
-    public Message awaitMessage(MicroService m) throws InterruptedException {
-        // TODO Auto-generated method stub
+    public Message awaitMessage(MicroService m){
         ArrayBlockingQueue mqueue = queues.get(m);
-        while (mqueue.isEmpty());  //waits for message to be available
+        while (mqueue.isEmpty()) ;  //waits for message to be available
         return (Message) mqueue.poll();  //takes a message from the queue
     }
 }

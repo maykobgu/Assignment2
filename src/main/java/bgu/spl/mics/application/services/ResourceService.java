@@ -6,8 +6,6 @@ import bgu.spl.mics.application.messages.ReleaseVehicleEvent;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
-import java.util.HashMap;
-
 /**
  * ResourceService is in charge of the store resources - the delivery vehicles.
  * Holds a reference to the {@link ResourceHolder} singleton of the store.
@@ -20,8 +18,9 @@ import java.util.HashMap;
 public class ResourceService extends MicroService {
     private static ResourcesHolder instance = ResourcesHolder.getInstance();
 
-    public ResourceService() {
+    public ResourceService(DeliveryVehicle[] vehicles) {
         super("Change_This_Name");
+        instance.load(vehicles);
         // TODO Implement this
     }
 

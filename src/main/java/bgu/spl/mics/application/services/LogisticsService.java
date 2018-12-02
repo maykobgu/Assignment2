@@ -8,6 +8,8 @@ import bgu.spl.mics.application.messages.AcquireVehicleEvent;
 import bgu.spl.mics.application.messages.DeliveryEvent;
 import bgu.spl.mics.application.messages.ReleaseVehicleEvent;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
+import bgu.spl.mics.application.passiveObjects.MoneyRegister;
+import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
 import java.util.HashMap;
@@ -34,7 +36,7 @@ public class LogisticsService extends MicroService {
         subscribeEvent(DeliveryEvent.class, this::processEvent);
     }
 
-    private void processEvent(DeliveryEvent e) throws InterruptedException {
+    private synchronized void processEvent(DeliveryEvent e) throws InterruptedException {
         AcquireVehicleEvent acq = new AcquireVehicleEvent();
         Future result = sendEvent(acq);
         DeliveryVehicle vehicle = (DeliveryVehicle) result.get();
@@ -42,4 +44,5 @@ public class LogisticsService extends MicroService {
         ReleaseVehicleEvent rel = new ReleaseVehicleEvent(vehicle);
         sendEvent(rel);
     }
+
 }

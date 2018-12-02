@@ -18,6 +18,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.sun.tools.javac.util.Pair;
+import com.sun.xml.internal.bind.v2.TODO;
 
 /**
  * This is the Main class of the application. You should parse the input file,
@@ -34,28 +35,29 @@ public class BookStoreRunner {
         JsonArray vehicles = initialResources.getAsJsonObject().get("vehicles").getAsJsonArray();
         JsonElement services = parser.parse(getReader(path)).getAsJsonObject().get("services").getAsJsonObject();
         JsonObject time = services.getAsJsonObject().get("time").getAsJsonObject();
-        JsonElement numOfSelling = getNumOfInstances(services, "selling");
-        JsonElement numOfinventoryService = getNumOfInstances(services, "inventoryService");
-        JsonElement numOflogistics = getNumOfInstances(services, "logistics");
-        JsonElement numOfresourcesService = getNumOfInstances(services, "resourcesService");
+        int numOfSelling = getNumOfInstances(services, "selling");
+        int numOfinventoryService = getNumOfInstances(services, "inventoryService");
+        int numOflogistics = getNumOfInstances(services, "logistics");
+        int numOfresourcesService = getNumOfInstances(services, "resourcesService");
         JsonArray customers = services.getAsJsonObject().get("customers").getAsJsonArray();
         BookInventoryInfo[] inventory = new BookInventoryInfo[initialInventory.size()];
-        Inventory inv = new Inventory();
         for (int i = 0; i < initialInventory.size(); i++) {
             String bookTitle = initialInventory.get(i).getAsJsonObject().get("bookTitle").getAsString();
             int amountInInventory = initialInventory.get(i).getAsJsonObject().get("amount").getAsInt();
             int price = initialInventory.get(i).getAsJsonObject().get("price").getAsInt();
             inventory[i] = new BookInventoryInfo(bookTitle, amountInInventory, price);
         }
-        inv.load(inventory);
+//TODO pass inventory array to inventory service's
         DeliveryVehicle[] vehiclesList = new DeliveryVehicle[vehicles.size()];
         for (int i = 0; i < vehicles.size(); i++) {
             int license = vehicles.get(i).getAsJsonObject().get("license").getAsInt();
             int speed = vehicles.get(i).getAsJsonObject().get("speed").getAsInt();
             vehiclesList[i] = new DeliveryVehicle(license, speed);
         }
+//TODO pass vehiclesList array to resources service's
         int timeSpeed = time.get("speed").getAsInt();
         int timeDuration = time.get("duration").getAsInt();
+//TODO pass timeSpeed and pass timeDuration to timeservice
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
             int id = element.getAsJsonObject().get("id").getAsInt();
@@ -75,13 +77,18 @@ public class BookStoreRunner {
             Customers[index] = customer;
             index++;
         }
+//TODO create Threads and start and run methods for all microservices
+//create selling service instances
+        for (int i = 0; i <numOfinventoryService ; i++) {
 
-        //get numbers of customers from the json and crete webapi for each one of them
-        //according to the json, create the micro services needed
+        }
+//TODO create api's as the customers number and pass the customers to the constructors
+
+        //according to the json, create the micro services needed and RUN
     }
 
-    private static JsonElement getNumOfInstances(JsonElement services, String field) {
-        return services.getAsJsonObject().get(field);
+    private static int getNumOfInstances(JsonElement services, String field) {
+        return services.getAsJsonObject().get(field).getAsInt();
     }
 
     private static JsonReader getReader(String fileName) throws FileNotFoundException {

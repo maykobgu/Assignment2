@@ -27,29 +27,24 @@ import java.util.HashMap;
  */
 public class APIService extends MicroService {
     private Customer customer;
-    private TimeService time;
 
-    public APIService(Customer customer, int speed, int duration) {
+    public APIService(Customer customer) {
         super("APIService");
         this.customer = customer;
-        time = new TimeService(speed, duration);
     }
 
     @Override
     protected void initialize() {
         subscribeBroadcast(TickBroadcast.class, this::act);
-        time.run();
         for (Pair<String, Integer> book : customer.getOrderSchedule()) {
             OrderBookEvent order = new OrderBookEvent(customer, book.fst);
-            Future result = sendEvent(order); //last result- book taken or not
+            Future result = sendEvent(order); //last result- receipt
             if (result != null) {
                 customer.addReceipt((OrderReceipt) result.get());
                 DeliveryEvent deliver = new DeliveryEvent(customer);
                 sendEvent(deliver); //does not need to wait
             }
-
         }
-//        subscribeEvent(CheckAvailability.class, this::processEvent);
     }
 
     private void act(TickBroadcast e) {

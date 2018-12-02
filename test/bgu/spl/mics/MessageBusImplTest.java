@@ -1,13 +1,7 @@
 package bgu.spl.mics;
 
-import bgu.spl.mics.application.services.*;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Queue;
-
-import static org.junit.Assert.*;
 
 
 public class MessageBusImplTest {
@@ -15,12 +9,10 @@ public class MessageBusImplTest {
 
     @Before
     public void setUp() {
-
     }
 
     @Test
     public void subscribeEvent() throws Exception {
-//        bus.subscribeEvent(, api);
     }
 
     @Test

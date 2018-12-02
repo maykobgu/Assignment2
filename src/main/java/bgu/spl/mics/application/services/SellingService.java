@@ -3,8 +3,8 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.CheckAvailability;
 import bgu.spl.mics.application.messages.OrderBookEvent;
-
-import java.util.HashMap;
+import bgu.spl.mics.application.passiveObjects.MoneyRegister;
+import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 
 /**
  * Selling service in charge of taking orders from customers.
@@ -17,6 +17,7 @@ import java.util.HashMap;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class SellingService extends MicroService {
+    private MoneyRegister moneyRegister = MoneyRegister.getInstance();
 
     public SellingService() {
         super("Change_This_Name");
@@ -31,8 +32,16 @@ public class SellingService extends MicroService {
 
     private void processEvent(OrderBookEvent e) {
         CheckAvailability check = new CheckAvailability(e.getCustomer(), e.getBookTitle());
-        Future result = sendEvent(check);
-        this.complete((Event) e, result.get());
+        Future price = sendEvent(check);
+        OrderReceipt receipt = null;
+        if ((int) price.get() != -1) {
+            receipt = MoneyRegister.createReceipt(e.getCustomer().getName(), e.getCustomer().getId(),
+                    e.getBookTitle(), (int) price.get(), 0, 0, 0); //make receipt
+            moneyRegister.chargeCreditCard(e.getCustomer(), (int) price.get()); //charge the customer for this book
+            moneyRegister.file(receipt);
+            notifyAll();
+        }
+        this.complete((Event) e, receipt);
     }
 
 }

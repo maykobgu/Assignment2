@@ -8,6 +8,7 @@ import static java.lang.Thread.sleep;
  * <p>
  * You may add ONLY private fields and methods to this class.
  */
+
 public class DeliveryVehicle {
     private boolean available;
     private int license;
@@ -47,15 +48,19 @@ public class DeliveryVehicle {
      * @param address  The address of the customer.
      * @param distance The distance from the store to the customer.
      */
-    public void deliver(String address, int distance) throws InterruptedException {
+    public synchronized void deliver(String address, int distance) throws InterruptedException {
         long deliveryDuration = distance * getSpeed();
-        available = false;
         sleep(deliveryDuration);
         available = true;
-        // TODO check this
+        notifyAll();
     }
 
     public boolean isAvailable() {
         return available;
+    }
+
+
+    public void acquire() {
+        available = false;
     }
 }

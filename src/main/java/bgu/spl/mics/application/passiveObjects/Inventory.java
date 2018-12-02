@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
+import java.util.concurrent.atomic.AtomicReferenceArray;
+
 /**
  * Passive data-object representing the store inventory.
  * It holds a collection of {@link BookInventoryInfo} for all the
@@ -12,15 +14,18 @@ package bgu.spl.mics.application.passiveObjects;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 
+
+//TODO all the class should be synchronized
 public class Inventory {
     private static Inventory instance = null;
     private BookInventoryInfo[] inventory;
+//    AtomicReferenceArray a = new AtomicReferenceArray(inventory);
+
 
     /**
      * Retrieves the single instance of this class.
      */
     public static Inventory getInstance() {
-        //TODO: Implement this
         if (instance == null) {
             instance = new Inventory();
         }
@@ -97,5 +102,9 @@ public class Inventory {
                 return object.getPrice();
         }
         return -1;
+    }
+
+    public BookInventoryInfo[] getInventory() {
+        return inventory;
     }
 }

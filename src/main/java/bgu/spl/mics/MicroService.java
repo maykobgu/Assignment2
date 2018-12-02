@@ -63,8 +63,8 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-        callbacks.put(type,callback);
-        messageBus.subscribeEvent(type,this);
+        callbacks.put(type, callback);
+        messageBus.subscribeEvent(type, this);
     }
 
     /**
@@ -89,8 +89,8 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-//maybe save the brodcast in a different hasmap contains microservice as a key and broadcast callback as a value.
-        messageBus.subscribeBroadcast(type,this);
+//maybe save the brodcast in a different hashmap contains microservice as a key and broadcast callback as a value.
+        messageBus.subscribeBroadcast(type, this);
     }
 
     /**
@@ -107,8 +107,7 @@ public abstract class MicroService implements Runnable {
      * null in case no micro-service has subscribed to {@code e.getClass()}.
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
-        //TODO: implement this.
-        return e.getFuture();
+        return messageBus.sendEvent(e);
     }
 
     /**
@@ -119,7 +118,7 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
-        //TODO: implement this.
+        messageBus.sendBroadcast(b);
     }
 
     /**
@@ -134,7 +133,7 @@ public abstract class MicroService implements Runnable {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-        e.getFuture().resolve(result);
+        messageBus.complete(e, result);
     }
 
     /**
@@ -147,6 +146,7 @@ public abstract class MicroService implements Runnable {
      * message.
      */
     protected final void terminate() {
+        //TICKS
         this.terminated = true;
     }
 
@@ -159,24 +159,22 @@ public abstract class MicroService implements Runnable {
     }
 
     /**
-     * The entry point of the micro-service. TODO: you must complete this code
+     * The entry point of the micro-service.
      * otherwise you will end up in an infinite loop.
      */
     @Override
     public final void run() {
         messageBus.register(this);
         initialize();
-//        try {
-//            messageBus.awaitMessage(this);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         while (!terminated) {
-            System.out.println("NOT IMPLEMENTED!!!"); //TODO: you should delete this line :)
-        }
-    }
+            try {
+                Message message = messageBus.awaitMessage(this);
+                Callback c = callbacks.get(message);
+                c.call(message);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-    public HashMap<Message, Callback> getCallbacks(){
-        return callbacks;
+        }
     }
 }
