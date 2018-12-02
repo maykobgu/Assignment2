@@ -47,6 +47,7 @@ public class ResourcesHolder {
             if (vehicles[i].isAvailable()) {
                 result.resolve(vehicles[i]);
                 found = true;
+                vehicles[i].acquire();
             }
         }
         return result;
