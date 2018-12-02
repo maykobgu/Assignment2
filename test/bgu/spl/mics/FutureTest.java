@@ -105,21 +105,21 @@ public class FutureTest {
     @Test
     public void getTimeout() throws Exception {
         try {
-            assertNull(newFuture.get(10, SECONDS));
+            assertNull(newFuture.get(1, SECONDS));
         } catch (Exception e) {
             fail("Future object supposed to be null");
         }
 
         try {
             newFuture.resolve("resolve");
-            assertEquals("resolve", newFuture.get(5, SECONDS));
+            assertEquals("resolve", newFuture.get(1, SECONDS));
         } catch (Exception e) {
             fail("String object should be supported");
         }
 
         try {
             newFuture.resolve('s');
-            assertEquals('s', newFuture.get(100, MILLISECONDS));
+            assertEquals('s', newFuture.get(1, MILLISECONDS));
         } catch (Exception e) {
             fail("char object should be supported");
         }

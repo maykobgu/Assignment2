@@ -17,6 +17,7 @@ public class InventoryTest {
         BookInventoryInfo book0 = new BookInventoryInfo("harry potter", 5, 10);
         BookInventoryInfo book1 = new BookInventoryInfo("snow white", 3, 100);
         BookInventoryInfo book2 = new BookInventoryInfo("little prince", 0, 20);
+        arr = new BookInventoryInfo[3];
         arr[0] = book0;
         arr[1] = book1;
         arr[2] = book2;
@@ -44,6 +45,7 @@ public class InventoryTest {
 
     @Test
     public void take() throws Exception {
+        inv.load(arr);
         try {
             assertEquals(NOT_IN_STOCK, inv.take(arr[2].getBookTitle()));
         } catch (Exception e) {
@@ -64,6 +66,7 @@ public class InventoryTest {
 
     @Test
     public void checkAvailabiltyAndGetPrice() throws Exception {
+        inv.load(arr);
         try {
             assertEquals(10, inv.checkAvailabiltyAndGetPrice(arr[0].getBookTitle()));
         } catch (Exception e) {
