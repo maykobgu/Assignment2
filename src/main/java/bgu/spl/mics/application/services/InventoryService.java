@@ -30,7 +30,6 @@ public class InventoryService extends MicroService {
     protected void initialize() {
         // TODO Implement this
         subscribeEvent(CheckAvailability.class, this::processEvent);
-        subscribeBroadcast(TickBroadcast.class, this::act);
     }
 
     private synchronized void processEvent(CheckAvailability e) {
@@ -49,6 +48,4 @@ public class InventoryService extends MicroService {
                     (currentAmount - inventory.getPrice(e.getBook()))) ;
     }
 
-    private void act(TickBroadcast e) {
-    }
 }

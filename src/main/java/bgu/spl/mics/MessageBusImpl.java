@@ -1,5 +1,6 @@
 package bgu.spl.mics;
 
+import java.util.LinkedList;
 import com.sun.tools.javac.util.Pair;
 
 import java.lang.reflect.Array;
@@ -74,7 +75,6 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public void unregister(MicroService m) {
         queues.remove(m);
-
     }
 
     @Override

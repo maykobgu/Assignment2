@@ -12,6 +12,8 @@ import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
+import bgu.spl.mics.application.services.LogisticsService;
+import bgu.spl.mics.application.services.ResourceService;
 import bgu.spl.mics.application.services.APIService;
 import bgu.spl.mics.application.services.InventoryService;
 import bgu.spl.mics.application.services.SellingService;
@@ -32,6 +34,8 @@ import com.sun.xml.internal.bind.v2.TODO;
 public class BookStoreRunner {
     public static void main(String[] args) throws FileNotFoundException {
         int index = 0;
+        List logistic = new LinkedList();
+        List resources = new LinkedList();
         JsonParser parser = new JsonParser();
         String path = "/Users/maykogan/Desktop/input.json";
         JsonArray initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
@@ -51,11 +55,24 @@ public class BookStoreRunner {
             int price = initialInventory.get(i).getAsJsonObject().get("price").getAsInt();
             inventory[i] = new BookInventoryInfo(bookTitle, amountInInventory, price);
         }
+//TODO pass inventory array to inventory service's
+        // logistics Threads
+        for (int i = 0; i < numOflogistics; i++) {
+            LogisticsService log = new LogisticsService();
+            Thread t = new Thread(log);
+            logistic.add(t);
+        }
         DeliveryVehicle[] vehiclesList = new DeliveryVehicle[vehicles.size()];
         for (int i = 0; i < vehicles.size(); i++) {
             int license = vehicles.get(i).getAsJsonObject().get("license").getAsInt();
             int speed = vehicles.get(i).getAsJsonObject().get("speed").getAsInt();
             vehiclesList[i] = new DeliveryVehicle(license, speed);
+        }
+        // resources Threads
+        for (int i = 0; i < numOfresourcesService; i++) {
+            ResourceService res = new ResourceService(vehiclesList);
+            Thread t = new Thread(res);
+            resources.add(t);
         }
         List InventoryServices = new LinkedList(); //TODO pass inventory array to inventory service's
         for (int i = 0; i < numOfinventoryService; i++) {

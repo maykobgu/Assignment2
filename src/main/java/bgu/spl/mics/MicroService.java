@@ -1,4 +1,7 @@
 package bgu.spl.mics;
+
+import bgu.spl.mics.application.messages.TickBroadcast;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -86,6 +89,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
+        callbacks.put(type, callback);
         messageBus.subscribeBroadcast(type, this);
     }
 
