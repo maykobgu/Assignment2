@@ -22,7 +22,7 @@ import java.util.TimerTask;
 public class TimeService extends MicroService{
       private int speed;
       private int duration;
-      private static TimeService instance = null;
+//      private static TimeService instance = null;
 
 	public TimeService(int duration, int speed) {
 		super("TimeService");
