@@ -14,6 +14,9 @@ import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import com.sun.tools.javac.util.Pair;
 
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * APIService is in charge of the connection between a client and the store.
  * It informs the store about desired purchases using {@link BookOrderEvent}.
@@ -25,15 +28,19 @@ import com.sun.tools.javac.util.Pair;
  */
 public class APIService extends MicroService {
     private Customer customer;
+    private List<Pair<String, Integer>> orderSchedule;
 
     public APIService(Customer customer) {
         super("APIService");
         this.customer = customer;
+        orderSchedule = customer.getOrderSchedule();
+        orderSchedule.sort(new myCompare());
     }
 
     @Override
     protected void initialize() {
         subscribeBroadcast(TickBroadcast.class, this::act);
+        //TODO
         for (Pair<String, Integer> book : customer.getOrderSchedule()) {
             OrderBookEvent order = new OrderBookEvent(customer, book.fst);
             Future result = sendEvent(order); //last result- receipt
@@ -50,4 +57,9 @@ public class APIService extends MicroService {
     }
 
 
+    private class myCompare implements Comparator<Pair<String, Integer>> {
+        public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2) {
+            return Integer.compare(o1.snd, o2.snd);
+        }
+    }
 }

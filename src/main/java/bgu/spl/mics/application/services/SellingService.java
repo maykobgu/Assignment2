@@ -3,6 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.CheckAvailability;
 import bgu.spl.mics.application.messages.OrderBookEvent;
+import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 
@@ -28,6 +29,7 @@ public class SellingService extends MicroService {
     protected void initialize() {
         // TODO Implement this
         subscribeEvent(OrderBookEvent.class, this::processEvent);
+        subscribeBroadcast(TickBroadcast.class, this::act);
     }
 
     private void processEvent(OrderBookEvent e) {
@@ -44,4 +46,7 @@ public class SellingService extends MicroService {
         this.complete((Event) e, receipt);
     }
 
+    private void act(TickBroadcast e) {
+// TICKS
+    }
 }

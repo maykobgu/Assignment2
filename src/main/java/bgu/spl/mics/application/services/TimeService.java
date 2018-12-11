@@ -18,8 +18,8 @@ import java.util.TimerTask;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class TimeService extends MicroService{
-      private int speed;
-      private int duration;
+      private int speed; //how much time one tick takes
+      private int duration; //how many ticks
 //      private static TimeService instance = null;
 
 	public TimeService(int duration, int speed) {
