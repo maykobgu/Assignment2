@@ -15,19 +15,20 @@ import java.util.concurrent.Semaphore;
  * You can add ONLY private methods and fields to this class.
  */
 public class ResourcesHolder {
-    private static ResourcesHolder instance = null;
     private DeliveryVehicle[] vehicles; //Holds a collection of DeliveryVehicle
     private Semaphore s = new Semaphore(vehicles.length, true);
+
+    private static class SingletonHolder {
+        private static ResourcesHolder instance = new ResourcesHolder();
+    }
 
     /**
      * Retrieves the single instance of this class.
      */
     public static ResourcesHolder getInstance() {
-        if (instance == null) {
-            instance = new ResourcesHolder();
-        }
-        return instance;
+        return ResourcesHolder.SingletonHolder.instance;
     }
+
 
 
     /**
