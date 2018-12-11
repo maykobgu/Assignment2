@@ -1,4 +1,5 @@
 package bgu.spl.mics;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -8,18 +9,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-    private static MessageBusImpl instance = null;
     private ConcurrentHashMap<MicroService, ArrayBlockingQueue<Message>> queues; //maybe we need to save the name of the microservice instead of the microservice itself
     private ConcurrentHashMap<Class, MicroService> eventMapping;
+
+    private static class SingletonHolder {
+        private static MessageBusImpl instance = new MessageBusImpl();
+    }
 
     /**
      * Retrieves the single instance of this class.
      */
     public static MessageBusImpl getInstance() {
-        if (instance == null) {
-            instance = new MessageBusImpl();
-        }
-        return instance;
+        return SingletonHolder.instance;
     }
 
     @Override
@@ -64,9 +65,10 @@ public class MessageBusImpl implements MessageBus {
     }
 
     @Override
-    public Message awaitMessage(MicroService m){
+    public Message awaitMessage(MicroService m) {
         ArrayBlockingQueue mqueue = queues.get(m);
         while (mqueue.isEmpty()) ;  //waits for message to be available
         return (Message) mqueue.poll();  //takes a message from the queue
     }
+
 }
