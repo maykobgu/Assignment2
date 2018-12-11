@@ -8,11 +8,15 @@ import bgu.spl.mics.application.passiveObjects.Customer;
 public class TickBroadcast implements Broadcast {
 
     private Future future;
+    private int tickNumber;
 
-    public TickBroadcast() {
-
+    public TickBroadcast(int tickNumber) {
+        this.tickNumber=tickNumber;
     }
 
+    public int getTickNumber(){
+        return tickNumber;
+    }
 
     public Future getFuture() {
         return future;

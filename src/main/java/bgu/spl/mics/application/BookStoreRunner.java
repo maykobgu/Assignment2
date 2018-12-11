@@ -14,6 +14,9 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 import bgu.spl.mics.application.services.LogisticsService;
 import bgu.spl.mics.application.services.ResourceService;
+import bgu.spl.mics.application.services.APIService;
+import bgu.spl.mics.application.services.InventoryService;
+import bgu.spl.mics.application.services.SellingService;
 import bgu.spl.mics.application.services.TimeService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -71,6 +74,12 @@ public class BookStoreRunner {
             Thread t = new Thread(res);
             resources.add(t);
         }
+        List InventoryServices = new LinkedList(); //TODO pass inventory array to inventory service's
+        for (int i = 0; i < numOfinventoryService; i++) {
+            InventoryService inv = new InventoryService(inventory);
+            InventoryServices.add(inv);
+        }
+//TODO pass vehiclesList array to resources service's
         int timeSpeed = time.get("speed").getAsInt();
         int timeDuration = time.get("duration").getAsInt();
 //TODO pass timeSpeed and pass timeDuration to timeservice
@@ -94,6 +103,17 @@ public class BookStoreRunner {
             index++;
         }
 //TODO create Threads and start and run methods for all microservices
+        List sellingServices = new LinkedList();
+        for (int i = 0; i <numOfSelling ; i++) {
+            SellingService sell = new SellingService();
+            sellingServices.add(sell);
+        }
+//TODO create api's as the customers number and pass the customers to the constructors
+        List apis = new LinkedList();
+        for (int i = 0; i < Customers.length ; i++) {
+            APIService api = new APIService(Customers[i]);
+            apis.add(api);
+        }
     }
 
     private static int getNumOfInstances(JsonElement services, String field) {

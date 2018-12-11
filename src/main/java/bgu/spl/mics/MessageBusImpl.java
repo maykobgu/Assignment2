@@ -1,6 +1,10 @@
 package bgu.spl.mics;
 
 import java.util.LinkedList;
+import com.sun.tools.javac.util.Pair;
+
+import java.lang.reflect.Array;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageBusImpl implements MessageBus {
     private ConcurrentHashMap<MicroService, ArrayBlockingQueue<Message>> queues; //maybe we need to save the name of the microservice instead of the microservice itself
     private ConcurrentHashMap<Class, MicroService> eventMapping;
+    private List <Pair<Class, MicroService>> tickBroadcastMapping;
+
 
     private static class SingletonHolder {
         private static MessageBusImpl instance = new MessageBusImpl();
@@ -31,7 +37,7 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-        // TODO Auto-generated method stub
+        tickBroadcastMapping.add(new Pair<>(type.getClass(), m));
     }
 
     @Override
@@ -42,7 +48,13 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void sendBroadcast(Broadcast b) {
-        // TODO Auto-generated method stub
+        for (int i = 0; i < tickBroadcastMapping.size(); i++) {
+            MicroService m;
+            if (tickBroadcastMapping.get(i).fst == b.getClass()) {
+                m = tickBroadcastMapping.get(i).snd;
+                queues.get(m).add(b);
+            }
+        }
     }
 
     @Override
