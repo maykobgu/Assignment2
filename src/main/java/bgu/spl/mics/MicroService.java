@@ -86,7 +86,6 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-//maybe save the brodcast in a different hashmap contains microservice as a key and broadcast callback as a value.
         messageBus.subscribeBroadcast(type, this);
     }
 

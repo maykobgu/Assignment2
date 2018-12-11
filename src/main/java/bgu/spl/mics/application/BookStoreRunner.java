@@ -3,6 +3,7 @@ package bgu.spl.mics.application;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import bgu.spl.mics.MessageBusImpl;
@@ -11,6 +12,9 @@ import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
+import bgu.spl.mics.application.services.APIService;
+import bgu.spl.mics.application.services.InventoryService;
+import bgu.spl.mics.application.services.SellingService;
 import bgu.spl.mics.application.services.TimeService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -47,12 +51,16 @@ public class BookStoreRunner {
             int price = initialInventory.get(i).getAsJsonObject().get("price").getAsInt();
             inventory[i] = new BookInventoryInfo(bookTitle, amountInInventory, price);
         }
-//TODO pass inventory array to inventory service's
         DeliveryVehicle[] vehiclesList = new DeliveryVehicle[vehicles.size()];
         for (int i = 0; i < vehicles.size(); i++) {
             int license = vehicles.get(i).getAsJsonObject().get("license").getAsInt();
             int speed = vehicles.get(i).getAsJsonObject().get("speed").getAsInt();
             vehiclesList[i] = new DeliveryVehicle(license, speed);
+        }
+        List InventoryServices = new LinkedList(); //TODO pass inventory array to inventory service's
+        for (int i = 0; i < numOfinventoryService; i++) {
+            InventoryService inv = new InventoryService(inventory);
+            InventoryServices.add(inv);
         }
 //TODO pass vehiclesList array to resources service's
         int timeSpeed = time.get("speed").getAsInt();
@@ -78,13 +86,17 @@ public class BookStoreRunner {
             index++;
         }
 //TODO create Threads and start and run methods for all microservices
-//create selling service instances
-        for (int i = 0; i <numOfinventoryService ; i++) {
-
+        List sellingServices = new LinkedList();
+        for (int i = 0; i <numOfSelling ; i++) {
+            SellingService sell = new SellingService();
+            sellingServices.add(sell);
         }
 //TODO create api's as the customers number and pass the customers to the constructors
-
-        //according to the json, create the micro services needed and RUN
+        List apis = new LinkedList();
+        for (int i = 0; i < Customers.length ; i++) {
+            APIService api = new APIService(Customers[i]);
+            apis.add(api);
+        }
     }
 
     private static int getNumOfInstances(JsonElement services, String field) {

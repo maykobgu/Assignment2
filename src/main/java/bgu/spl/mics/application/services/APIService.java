@@ -10,9 +10,7 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 import com.sun.tools.javac.util.Pair;
-import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
-import com.sun.tools.javac.util.Pair;
 
 /**
  * APIService is in charge of the connection between a client and the store.
