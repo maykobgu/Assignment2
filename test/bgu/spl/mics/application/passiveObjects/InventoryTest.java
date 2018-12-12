@@ -4,6 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+
 import static bgu.spl.mics.application.passiveObjects.OrderResult.*;
 import static org.junit.Assert.*;
 
@@ -91,7 +93,7 @@ public class InventoryTest {
 
     @Test
     public void printInventoryToFile() throws Exception {
-//        TODO - dont implement
+        //TODO
     }
 
     @Test

@@ -38,6 +38,7 @@ public abstract class MicroService implements Runnable {
      */
     public MicroService(String name) {
         this.name = name;
+        callbacks = new ConcurrentHashMap<>();
     }
 
     /**

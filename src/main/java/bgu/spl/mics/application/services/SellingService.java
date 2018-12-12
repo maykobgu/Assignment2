@@ -22,13 +22,11 @@ public class SellingService extends MicroService {
     private int currentTick;
 
     public SellingService() {
-        super("Change_This_Name");
-        // TODO Implement this
+        super("SellingService");
     }
 
     @Override
     protected void initialize() {
-        // TODO Implement this
         subscribeEvent(OrderBookEvent.class, this::processEvent);
         subscribeBroadcast(TickBroadcast.class, this::act);
     }
