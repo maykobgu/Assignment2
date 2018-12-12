@@ -1,6 +1,7 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.messages.TickBroadcast;
+import bgu.spl.mics.application.services.TimeService;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  */
 public abstract class MicroService implements Runnable {
-    private MessageBusImpl messageBus = MessageBusImpl.getInstance();
-    private boolean terminated = false;
+    private MessageBusImpl messageBus;
+    private boolean terminated;
     private final String name;
     private ConcurrentHashMap<Class, Callback> callbacks;
 
@@ -38,7 +39,9 @@ public abstract class MicroService implements Runnable {
      */
     public MicroService(String name) {
         this.name = name;
+        terminated=false;
         callbacks = new ConcurrentHashMap<>();
+        messageBus = MessageBusImpl.getInstance();
     }
 
     /**
@@ -165,17 +168,20 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
-        messageBus.register(this);
-        initialize();
-        while (!terminated) {
-            try {
-                Message message = messageBus.awaitMessage(this);
-                Callback c = callbacks.get(message);
-                c.call(message);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        if (!(this instanceof TimeService)) {
+            messageBus.register(this);
+            initialize();
+            while (!terminated) {
+                try {
+                    Message message = messageBus.awaitMessage(this);
+                    Callback c = callbacks.get(message);
+                    c.call(message);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
-        }
+        } else
+            initialize();
     }
 }
