@@ -15,7 +15,7 @@ import java.util.concurrent.Semaphore;
  */
 public class ResourcesHolder {
     private static DeliveryVehicle[] vehicles; //Holds a collection of DeliveryVehicle
-    private static Semaphore s= new Semaphore(vehicles.length, true);
+    private static Semaphore s;
 
     private static class SingletonHolder {
         private static ResourcesHolder instance = new ResourcesHolder();
@@ -71,5 +71,6 @@ public class ResourcesHolder {
      */
     public void load(DeliveryVehicle[] vehicles) {
         this.vehicles = vehicles;
+        s = new Semaphore(vehicles.length, true);
     }
 }
