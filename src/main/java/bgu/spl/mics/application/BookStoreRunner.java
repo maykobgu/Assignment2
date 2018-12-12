@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+
 import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
@@ -35,6 +36,9 @@ public class BookStoreRunner {
         JsonArray vehicles = initialResources.getAsJsonObject().get("vehicles").getAsJsonArray();
         JsonElement services = parser.parse(getReader(path)).getAsJsonObject().get("services").getAsJsonObject();
         JsonObject time = services.getAsJsonObject().get("time").getAsJsonObject();
+        int timeSpeed = time.get("speed").getAsInt();
+        int duration = time.get("duration").getAsInt();
+
         int numOfSelling = getNumOfInstances(services, "selling");
         int numOfinventoryService = getNumOfInstances(services, "inventoryService");
         int numOflogistics = getNumOfInstances(services, "logistics");
@@ -54,30 +58,25 @@ public class BookStoreRunner {
             vehiclesList[i] = new DeliveryVehicle(license, speed);
         }
         // logistics Threads
-        for (int i = 0; i < numOflogistics; i++) {
+        for (int i = 0; i < 1; i++) {
             Thread t = new Thread(new LogisticsService());
             t.start();
         }
         // resources Threads
-        for (int i = 0; i < numOfresourcesService; i++) {
+        for (int i = 0; i < 1; i++) {
             Thread t = new Thread(new ResourceService(vehiclesList));
             t.start();
         }
         // inventory Threads
-        for (int i = 0; i < numOfinventoryService; i++) {
+        for (int i = 0; i < 1; i++) {
             Thread t = new Thread(new InventoryService(inventory));
             t.start();
         }
         // selling Threads
-        for (int i = 0; i < numOfSelling; i++) {
+        for (int i = 0; i < 1; i++) {
             Thread t = new Thread(new SellingService());
             t.start();
         }
-        int speed = time.get("speed").getAsInt();
-        int duration = time.get("duration").getAsInt();
-        // TimeService Thread
-        Thread timeServiceThread = new Thread(new TimeService(duration, speed));
-        timeServiceThread.start();
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
             int id = element.getAsJsonObject().get("id").getAsInt();
@@ -98,10 +97,14 @@ public class BookStoreRunner {
             index++;
         }
         // API Threads
-        for (int i = 0; i < Customers.length; i++) {
+        for (int i = 0; i < 1; i++) {
             Thread t = new Thread(new APIService(Customers[i]));
             t.start();
         }
+
+        // TimeService Thread
+        Thread timeServiceThread = new Thread(new TimeService(duration, timeSpeed));
+        timeServiceThread.start();
     }
 
     private static int getNumOfInstances(JsonElement services, String field) {

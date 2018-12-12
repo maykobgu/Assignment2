@@ -10,38 +10,43 @@ import java.util.concurrent.ConcurrentHashMap;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-    private static ConcurrentHashMap<Class, Queue<MicroService>> queuesByEvent;
-    private static ConcurrentHashMap<MicroService, ArrayBlockingQueue> queues;
+    private ConcurrentHashMap<Class, Queue<MicroService>> queuesByEvent;
+    private ConcurrentHashMap<MicroService, ArrayBlockingQueue> queues;
 
 
     private static class SingletonHolder {
         private static MessageBusImpl instance = new MessageBusImpl();
     }
 
+    private MessageBusImpl() {
+        queuesByEvent = new ConcurrentHashMap<>();
+        queues = new ConcurrentHashMap<>();
+    }
+
     /**
      * Retrieves the single instance of this class.
      */
     public static MessageBusImpl getInstance() {
-        queuesByEvent = new ConcurrentHashMap<>();
-        queues = new ConcurrentHashMap<>();
         return SingletonHolder.instance;
     }
 
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
         if (queuesByEvent.get(type) == null) {
-            queuesByEvent.put(type, new ArrayBlockingQueue<>(1000));
-            queuesByEvent.get(type).add(m);
+            ArrayBlockingQueue arr = new ArrayBlockingQueue<>(1000);
+            queuesByEvent.put(type, arr);
+            Queue q = queuesByEvent.get(type);
+            q.add(m);
         } else queuesByEvent.get(type).add(m);
         // TODO capacity?
     }
 
     @Override
     public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-        if (queuesByEvent.get(type.getClass()) == null) {
+        if (queuesByEvent.get(type) == null) {
             queuesByEvent.put(type, new ArrayBlockingQueue<>(1000));
-            queuesByEvent.get(type.getClass()).add(m);
-        } else queuesByEvent.get(type.getClass()).add(m);
+            queuesByEvent.get(type).add(m);
+        } else queuesByEvent.get(type).add(m);
         // TODO capacity?
     }
 
@@ -53,22 +58,25 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void sendBroadcast(Broadcast b) {
-        Queue q = queuesByEvent.get(b.getClass());
-        while (q == null || q.isEmpty()) ;
+        System.out.println("hi");
+        while (queuesByEvent.get(b) == null || queuesByEvent.get(b).isEmpty()) ;
+        Queue q = queuesByEvent.get(b);
         int size = q.size();
         for (int i = 0; i < size; i++) {
             MicroService m = (MicroService) q.poll();
             queues.get(m).add(b);
             q.add(m);
         }
+//        notifyAll();
     }
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-        while (queuesByEvent.get(e.getClass()) == null || queuesByEvent.get(e.getClass()).isEmpty()) ;
-        MicroService m = queuesByEvent.get(e.getClass()).poll(); //get the first micro service
+        while (queuesByEvent.get(e) == null || queuesByEvent.get(e).isEmpty()) ;
+        MicroService m = queuesByEvent.get(e).poll(); //get the first micro service
         queues.get(m).add(e); //find the relevant queue and push the message
-        queuesByEvent.get(e.getClass()).add(m); //push the micro service back to it's roundRobins queue
+        queuesByEvent.get(e).add(m); //push the micro service back to it's roundRobins queue
+        notifyAll();
         return e.getFuture();
     }
 
@@ -77,6 +85,7 @@ public class MessageBusImpl implements MessageBus {
     public void register(MicroService m) {
         // TODO capacity?
         queues.put(m, new ArrayBlockingQueue<>(100));
+        queues.get(0);
     }
 
     @Override
@@ -85,10 +94,10 @@ public class MessageBusImpl implements MessageBus {
     }
 
     @Override
-    public Message awaitMessage(MicroService m) {
-        ArrayBlockingQueue mqueue = queues.get(m);
-        while (mqueue.isEmpty()) ;  //waits for message to be available
-        return (Message) mqueue.poll();  //takes a message from the queue
+    public Message awaitMessage(MicroService m) throws InterruptedException {
+        if (queues.get(m) == null)
+            throw new NullPointerException();
+        return (Message) (queues.get(m).take()); //takes a message from the queue
     }
 
 }
