@@ -29,10 +29,10 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-        if (queuesByEvent.get(type.getClass()) == null) {
+        if (queuesByEvent.get(type) == null) {
             queuesByEvent.put(type, new ArrayBlockingQueue<>(1000));
-            queuesByEvent.get(type.getClass()).add(m);
-        } else queuesByEvent.get(type.getClass()).add(m);
+            queuesByEvent.get(type).add(m);
+        } else queuesByEvent.get(type).add(m);
         // TODO capacity?
     }
 

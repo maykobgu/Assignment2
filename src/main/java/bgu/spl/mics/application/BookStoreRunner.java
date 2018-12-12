@@ -29,7 +29,7 @@ public class BookStoreRunner {
     public static void main(String[] args) throws FileNotFoundException {
         int index = 0;
         JsonParser parser = new JsonParser();
-        String path = "/Users/maykogan/Desktop/input.json";
+        String path = "/Users/meshiy/Downloads/input.json";
         JsonArray initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
         JsonElement initialResources = parser.parse(getReader(path)).getAsJsonObject().get("initialResources").getAsJsonArray().get(0);
         JsonArray vehicles = initialResources.getAsJsonObject().get("vehicles").getAsJsonArray();
