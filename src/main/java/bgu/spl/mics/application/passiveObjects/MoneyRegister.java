@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
+import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -62,7 +64,20 @@ public class MoneyRegister {
      * This method is called by the main method in order to generate the output..
      */
     public void printOrderReceipts(String filename) {
-        //TODO: Implement this
+        Writer writer = null;
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename + ".txt"), "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            writer.write(receiptlist.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //TODO check!!!!!!!!!!!!!!!
     }
 
     public static OrderReceipt createReceipt(String seller, int customer, String bookTitle, int price, int issuedTick, int orderTick, int proccessTick) {

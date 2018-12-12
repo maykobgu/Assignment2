@@ -1,5 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.io.*;
+import java.util.HashMap;
+
 /**
  * Passive data-object representing the store inventory.
  * It holds a collection of {@link BookInventoryInfo} for all the
@@ -14,8 +17,7 @@ package bgu.spl.mics.application.passiveObjects;
 
 //TODO all the class should be synchronized
 public class Inventory {
-    private BookInventoryInfo[] inventory;
-//    AtomicReferenceArray a = new AtomicReferenceArray(inventory);
+    private static BookInventoryInfo[] inventory;
 
 
     private static class SingletonHolder {
@@ -90,7 +92,24 @@ public class Inventory {
      * This method is called by the main method in order to generate the output.
      */
     public void printInventoryToFile(String filename) {
-        //TODO: Implement this
+        HashMap inventoryFile = new HashMap();
+        for (int i = 0; i < inventory.length; i++) {
+            inventoryFile.put(inventory[i].getBookTitle(), inventory[i].getAmountInInventory());
+        }
+        Writer writer = null;
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename + ".txt"), "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            writer.write(inventoryFile.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    //TODO check!!!!!!!!!!!!!!!
     }
 
     public int getPrice(String book) {

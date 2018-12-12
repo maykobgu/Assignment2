@@ -19,15 +19,14 @@ import bgu.spl.mics.application.passiveObjects.OrderReceipt;
  */
 public class SellingService extends MicroService {
     private MoneyRegister moneyRegister = MoneyRegister.getInstance();
+    private int currentTick;
 
     public SellingService() {
-        super("Change_This_Name");
-        // TODO Implement this
+        super("SellingService");
     }
 
     @Override
     protected void initialize() {
-        // TODO Implement this
         subscribeEvent(OrderBookEvent.class, this::processEvent);
         subscribeBroadcast(TickBroadcast.class, this::act);
     }
@@ -38,7 +37,7 @@ public class SellingService extends MicroService {
         OrderReceipt receipt = null;
         if ((int) price.get() != -1) {
             receipt = MoneyRegister.createReceipt(e.getCustomer().getName(), e.getCustomer().getId(),
-                    e.getBookTitle(), (int) price.get(), 0, 0, 0); //make receipt
+                    e.getBookTitle(), (int) price.get(), currentTick, e.getOrderedTick(), currentTick); //make receipt
             moneyRegister.chargeCreditCard(e.getCustomer(), (int) price.get()); //charge the customer for this book
             moneyRegister.file(receipt);
             notifyAll();
@@ -47,6 +46,6 @@ public class SellingService extends MicroService {
     }
 
     private void act(TickBroadcast e) {
-// TICKS
+        currentTick = e.getCurrentTick();
     }
 }

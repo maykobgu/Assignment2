@@ -35,7 +35,6 @@ public class Customer {
      * Retrieves the name of the customer.
      */
     public String getName() {
-        // TODO Implement this
         return name;
     }
 
@@ -43,7 +42,6 @@ public class Customer {
      * Retrieves the ID of the customer  .
      */
     public int getId() {
-        // TODO Implement this
         return id;
     }
 
@@ -51,7 +49,6 @@ public class Customer {
      * Retrieves the address of the customer.
      */
     public String getAddress() {
-        // TODO Implement this
         return address;
     }
 
@@ -59,7 +56,6 @@ public class Customer {
      * Retrieves the distance of the customer from the store.
      */
     public int getDistance() {
-        // TODO Implement this
         return distance;
     }
 
