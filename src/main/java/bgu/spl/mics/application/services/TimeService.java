@@ -9,8 +9,6 @@ import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static java.lang.Thread.sleep;
-
 /**
  * TimeService is the global system timer There is only one instance of this micro-service.
  * It keeps track of the amount of ticks passed since initialization and notifies
@@ -24,12 +22,14 @@ import static java.lang.Thread.sleep;
 public class TimeService extends MicroService{
       private int speed; //how much time one tick takes
       private int duration; //how many ticks
-//      private static TimeService instance = null;
+      private int currentTick; //how many ticks
+
 
 	public TimeService(int duration, int speed) {
 		super("TimeService");
 		this.speed = speed;
 		this.duration = duration;
+		currentTick=0;
 	}
 
 	@Override
@@ -38,19 +38,18 @@ public class TimeService extends MicroService{
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                for (int i=0; i<duration; i++){
-                    try {
-                        sleep(speed);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    TickBroadcast tickMessage = new TickBroadcast(i);
+                if (currentTick < duration) {
+                    currentTick++;
+                    TickBroadcast tickMessage = new TickBroadcast(currentTick);
                     sendBroadcast(tickMessage);
+                }
+                else{
+                    terminate(); //send broadcast of terminate
                 }
 
             }
         };
-        time.schedule(task,  speed, duration);
+        time.schedule(task,  0, speed);
     }
 
 }

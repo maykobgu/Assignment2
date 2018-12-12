@@ -15,8 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MessageBusImpl implements MessageBus {
     private ConcurrentHashMap<MicroService, ArrayBlockingQueue<Message>> queues; //maybe we need to save the name of the microservice instead of the microservice itself
-    private ConcurrentHashMap<Class, MicroService> eventMapping;
-    private List <Pair<Class, MicroService>> tickBroadcastMapping;
+    private ConcurrentHashMap<Class, MicroService> eventMapping; //these are instances, we have several sellingServices and api's nd ect
+    private List <Pair<Class, MicroService>> broadcastMapping;
 
 
     private static class SingletonHolder {
@@ -37,7 +37,7 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-        tickBroadcastMapping.add(new Pair<>(type.getClass(), m));
+        broadcastMapping.add(new Pair<>(type.getClass(), m));
     }
 
     @Override
@@ -48,10 +48,10 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void sendBroadcast(Broadcast b) {
-        for (int i = 0; i < tickBroadcastMapping.size(); i++) {
+        for (int i = 0; i < broadcastMapping.size(); i++) {
             MicroService m;
-            if (tickBroadcastMapping.get(i).fst == b.getClass()) {
-                m = tickBroadcastMapping.get(i).snd;
+            if (broadcastMapping.get(i).fst == b.getClass()) {
+                m = broadcastMapping.get(i).snd;
                 queues.get(m).add(b);
             }
         }
@@ -74,6 +74,7 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void unregister(MicroService m) {
+//        queues.get(m). resolved all the events in the queue
         queues.remove(m);
     }
 
