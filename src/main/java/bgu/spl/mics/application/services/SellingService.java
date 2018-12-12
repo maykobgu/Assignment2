@@ -3,6 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.CheckAvailability;
 import bgu.spl.mics.application.messages.OrderBookEvent;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
@@ -29,9 +30,12 @@ public class SellingService extends MicroService {
     protected void initialize() {
         subscribeEvent(OrderBookEvent.class, this::processEvent);
         subscribeBroadcast(TickBroadcast.class, this::act);
+        subscribeBroadcast(TerminateBroadcast.class, this::finish);
+
     }
 
     private void processEvent(OrderBookEvent e) {
+        System.out.println(" got OrderBookEvent ");
         CheckAvailability check = new CheckAvailability(e.getCustomer(), e.getBookTitle());
         Future price = sendEvent(check);
         OrderReceipt receipt = null;
@@ -47,5 +51,9 @@ public class SellingService extends MicroService {
 
     private void act(TickBroadcast e) {
         currentTick = e.getCurrentTick();
+    }
+
+    private void finish(TerminateBroadcast e) {
+        terminate();
     }
 }

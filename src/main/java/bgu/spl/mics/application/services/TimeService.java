@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
@@ -41,14 +42,14 @@ public class TimeService extends MicroService {
                 if (currentTick < duration) {
                     currentTick++;
                     TickBroadcast tickMessage = new TickBroadcast(currentTick);
+                    System.out.println("Tick number: " + currentTick);
                     sendBroadcast(tickMessage);
                 } else {
-                    terminate(); //send broadcast of terminate
+                    sendBroadcast(new TerminateBroadcast());
+                    terminate();
                 }
             }
         };
-        System.out.println("Tick number: " + currentTick);
         time.schedule(task, 0, speed);
     }
-
 }
