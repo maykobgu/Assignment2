@@ -14,7 +14,7 @@ public class TickBroadcast implements Broadcast {
         this.tickNumber=tickNumber;
     }
 
-    public int getTickNumber(){
+    public int getCurrentTick(){
         return tickNumber;
     }
 

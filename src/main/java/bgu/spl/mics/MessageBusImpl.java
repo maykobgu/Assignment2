@@ -1,10 +1,6 @@
 package bgu.spl.mics;
 
-import java.util.LinkedList;
-import com.sun.tools.javac.util.Pair;
-
-import java.lang.reflect.Array;
-import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,9 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-    private ConcurrentHashMap<MicroService, ArrayBlockingQueue<Message>> queues; //maybe we need to save the name of the microservice instead of the microservice itself
-    private ConcurrentHashMap<Class, MicroService> eventMapping; //these are instances, we have several sellingServices and api's nd ect
-    private List <Pair<Class, MicroService>> broadcastMapping;
+    private static ConcurrentHashMap<Class, Queue<MicroService>> queuesByEvent;
+    private static ConcurrentHashMap<MicroService, ArrayBlockingQueue> queues;
 
 
     private static class SingletonHolder {
@@ -27,17 +22,27 @@ public class MessageBusImpl implements MessageBus {
      * Retrieves the single instance of this class.
      */
     public static MessageBusImpl getInstance() {
+        queuesByEvent = new ConcurrentHashMap<>();
+        queues = new ConcurrentHashMap<>();
         return SingletonHolder.instance;
     }
 
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-        eventMapping.put(type.getClass(), m);
+        if (queuesByEvent.get(type.getClass()) == null) {
+            queuesByEvent.put(type, new ArrayBlockingQueue<>(1000));
+            queuesByEvent.get(type.getClass()).add(m);
+        } else queuesByEvent.get(type.getClass()).add(m);
+        // TODO capacity?
     }
 
     @Override
     public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-        broadcastMapping.add(new Pair<>(type.getClass(), m));
+        if (queuesByEvent.get(type.getClass()) == null) {
+            queuesByEvent.put(type, new ArrayBlockingQueue<>(1000));
+            queuesByEvent.get(type.getClass()).add(m);
+        } else queuesByEvent.get(type.getClass()).add(m);
+        // TODO capacity?
     }
 
     @Override
@@ -48,23 +53,25 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void sendBroadcast(Broadcast b) {
-        for (int i = 0; i < broadcastMapping.size(); i++) {
-            MicroService m;
-            if (broadcastMapping.get(i).fst == b.getClass()) {
-                m = broadcastMapping.get(i).snd;
-                queues.get(m).add(b);
-            }
+        Queue q = queuesByEvent.get(b.getClass());
+        while (q == null || q.isEmpty()) ;
+        int size = q.size();
+        for (int i = 0; i < size; i++) {
+            MicroService m = (MicroService) q.poll();
+            queues.get(m).add(b);
+            q.add(m);
         }
     }
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-        MicroService m = eventMapping.get(e.getClass());
-        if (m == null) return null;
-        queues.get(m).add(e);
-        while (e.getFuture().isDone()) ;
+        while (queuesByEvent.get(e.getClass()) == null || queuesByEvent.get(e.getClass()).isEmpty()) ;
+        MicroService m = queuesByEvent.get(e.getClass()).poll(); //get the first micro service
+        queues.get(m).add(e); //find the relevant queue and push the message
+        queuesByEvent.get(e.getClass()).add(m); //push the micro service back to it's roundRobins queue
         return e.getFuture();
     }
+
 
     @Override
     public void register(MicroService m) {
@@ -74,7 +81,6 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void unregister(MicroService m) {
-//        queues.get(m). resolved all the events in the queue
         queues.remove(m);
     }
 

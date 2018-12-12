@@ -3,15 +3,10 @@ package bgu.spl.mics.application;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
-import bgu.spl.mics.application.passiveObjects.Inventory;
-import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 import bgu.spl.mics.application.services.LogisticsService;
 import bgu.spl.mics.application.services.ResourceService;
 import bgu.spl.mics.application.services.APIService;
@@ -24,7 +19,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.sun.tools.javac.util.Pair;
-import com.sun.xml.internal.bind.v2.TODO;
 
 /**
  * This is the Main class of the application. You should parse the input file,
@@ -34,8 +28,6 @@ import com.sun.xml.internal.bind.v2.TODO;
 public class BookStoreRunner {
     public static void main(String[] args) throws FileNotFoundException {
         int index = 0;
-        List logistic = new LinkedList();
-        List resources = new LinkedList();
         JsonParser parser = new JsonParser();
         String path = "/Users/maykogan/Desktop/input.json";
         JsonArray initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
@@ -55,34 +47,37 @@ public class BookStoreRunner {
             int price = initialInventory.get(i).getAsJsonObject().get("price").getAsInt();
             inventory[i] = new BookInventoryInfo(bookTitle, amountInInventory, price);
         }
-//TODO pass inventory array to inventory service's
-        // logistics Threads
-        for (int i = 0; i < numOflogistics; i++) {
-            LogisticsService log = new LogisticsService();
-            Thread t = new Thread(log);
-            logistic.add(t);
-        }
         DeliveryVehicle[] vehiclesList = new DeliveryVehicle[vehicles.size()];
         for (int i = 0; i < vehicles.size(); i++) {
             int license = vehicles.get(i).getAsJsonObject().get("license").getAsInt();
             int speed = vehicles.get(i).getAsJsonObject().get("speed").getAsInt();
             vehiclesList[i] = new DeliveryVehicle(license, speed);
         }
+        // logistics Threads
+        for (int i = 0; i < numOflogistics; i++) {
+            Thread t = new Thread(new LogisticsService());
+            t.start();
+        }
         // resources Threads
         for (int i = 0; i < numOfresourcesService; i++) {
-            ResourceService res = new ResourceService(vehiclesList);
-            Thread t = new Thread(res);
-            resources.add(t);
+            Thread t = new Thread(new ResourceService(vehiclesList));
+            t.start();
         }
-        List InventoryServices = new LinkedList(); //TODO pass inventory array to inventory service's
+        // inventory Threads
         for (int i = 0; i < numOfinventoryService; i++) {
-            InventoryService inv = new InventoryService(inventory);
-            InventoryServices.add(inv);
+            Thread t = new Thread(new InventoryService(inventory));
+            t.start();
         }
-//TODO pass vehiclesList array to resources service's
-        int timeSpeed = time.get("speed").getAsInt();
-        int timeDuration = time.get("duration").getAsInt();
-//TODO pass timeSpeed and pass timeDuration to timeservice
+        // selling Threads
+        for (int i = 0; i < numOfSelling; i++) {
+            Thread t = new Thread(new SellingService());
+            t.start();
+        }
+        int speed = time.get("speed").getAsInt();
+        int duration = time.get("duration").getAsInt();
+        // TimeService Thread
+        Thread timeServiceThread = new Thread(new TimeService(duration, speed));
+        timeServiceThread.start();
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
             int id = element.getAsJsonObject().get("id").getAsInt();
@@ -102,17 +97,10 @@ public class BookStoreRunner {
             Customers[index] = customer;
             index++;
         }
-//TODO create Threads and start and run methods for all microservices
-        List sellingServices = new LinkedList();
-        for (int i = 0; i <numOfSelling ; i++) {
-            SellingService sell = new SellingService();
-            sellingServices.add(sell);
-        }
-//TODO create api's as the customers number and pass the customers to the constructors
-        List apis = new LinkedList();
-        for (int i = 0; i < Customers.length ; i++) {
-            APIService api = new APIService(Customers[i]);
-            apis.add(api);
+        // API Threads
+        for (int i = 0; i < Customers.length; i++) {
+            Thread t = new Thread(new APIService(Customers[i]));
+            t.start();
         }
     }
 

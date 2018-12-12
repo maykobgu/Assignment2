@@ -19,14 +19,12 @@ public class ResourceService extends MicroService {
     private static ResourcesHolder instance = ResourcesHolder.getInstance();
 
     public ResourceService(DeliveryVehicle[] vehicles) {
-        super("Change_This_Name");
+        super("ResourceService");
         instance.load(vehicles);
-        // TODO Implement this
     }
 
     @Override
     protected void initialize() {
-        // TODO Implement this
         subscribeEvent(AcquireVehicleEvent.class, this::processEvent);
         subscribeEvent(ReleaseVehicleEvent.class, this::releaseEvent);
     }

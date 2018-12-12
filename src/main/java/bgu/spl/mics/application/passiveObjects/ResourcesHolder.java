@@ -2,7 +2,6 @@ package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
 
-import java.util.List;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -15,8 +14,8 @@ import java.util.concurrent.Semaphore;
  * You can add ONLY private methods and fields to this class.
  */
 public class ResourcesHolder {
-    private DeliveryVehicle[] vehicles; //Holds a collection of DeliveryVehicle
-    private Semaphore s = new Semaphore(vehicles.length, true);
+    private static DeliveryVehicle[] vehicles; //Holds a collection of DeliveryVehicle
+    private static Semaphore s= new Semaphore(vehicles.length, true);
 
     private static class SingletonHolder {
         private static ResourcesHolder instance = new ResourcesHolder();
@@ -28,7 +27,6 @@ public class ResourcesHolder {
     public static ResourcesHolder getInstance() {
         return ResourcesHolder.SingletonHolder.instance;
     }
-
 
 
     /**
