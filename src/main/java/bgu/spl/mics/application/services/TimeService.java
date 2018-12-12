@@ -5,6 +5,7 @@ import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,12 +22,14 @@ import java.util.TimerTask;
 public class TimeService extends MicroService{
       private int speed; //how much time one tick takes
       private int duration; //how many ticks
-//      private static TimeService instance = null;
+      private int currentTick; //how many ticks
+
 
 	public TimeService(int duration, int speed) {
 		super("TimeService");
 		this.speed = speed;
 		this.duration = duration;
+		currentTick=0;
 	}
 
 	@Override
@@ -35,13 +38,18 @@ public class TimeService extends MicroService{
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                for (int i=0; i<duration; i++){
-                    TickBroadcast tickMessage = new TickBroadcast(i);
+                if (currentTick < duration) {
+                    currentTick++;
+                    TickBroadcast tickMessage = new TickBroadcast(currentTick);
                     sendBroadcast(tickMessage);
                 }
+                else{
+                    terminate(); //send broadcast of terminate
+                }
+
             }
         };
-        time.schedule(task,  speed, duration);
+        time.schedule(task,  0, speed);
     }
 
 }
