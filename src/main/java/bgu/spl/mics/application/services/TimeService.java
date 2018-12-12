@@ -40,6 +40,7 @@ public class TimeService extends MicroService {
             public void run() {
                 if (currentTick < duration) {
                     currentTick++;
+                    System.out.println("Tick number: " + currentTick);
                     TickBroadcast tickMessage = new TickBroadcast(currentTick);
                     sendBroadcast(tickMessage);
                 } else {
@@ -47,7 +48,6 @@ public class TimeService extends MicroService {
                 }
             }
         };
-        System.out.println("Tick number: " + currentTick);
         time.schedule(task, 0, speed);
     }
 

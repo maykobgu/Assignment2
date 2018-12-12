@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MessageBusImpl implements MessageBus {
     private ConcurrentHashMap<Class, Queue<MicroService>> queuesByEvent;
-    private ConcurrentHashMap<MicroService, ArrayBlockingQueue> queues;
+    private ConcurrentHashMap<MicroService, ArrayBlockingQueue<Message>> queues;
 
 
     private static class SingletonHolder {
@@ -34,10 +34,11 @@ public class MessageBusImpl implements MessageBus {
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
         if (queuesByEvent.get(type) == null) {
             ArrayBlockingQueue arr = new ArrayBlockingQueue<>(1000);
-            queuesByEvent.put(type, arr);
-            Queue q = queuesByEvent.get(type);
-            q.add(m);
-        } else queuesByEvent.get(type).add(m);
+            synchronized (queuesByEvent) {
+                queuesByEvent.put(type, arr);
+                queuesByEvent.get(type).add(m);
+            }
+        } else synchronized (queuesByEvent) {queuesByEvent.get(type).add(m);};
         // TODO capacity?
     }
 
@@ -85,7 +86,6 @@ public class MessageBusImpl implements MessageBus {
     public void register(MicroService m) {
         // TODO capacity?
         queues.put(m, new ArrayBlockingQueue<>(100));
-        queues.get(0);
     }
 
     @Override
@@ -97,7 +97,8 @@ public class MessageBusImpl implements MessageBus {
     public Message awaitMessage(MicroService m) throws InterruptedException {
         if (queues.get(m) == null)
             throw new NullPointerException();
-        return (Message) (queues.get(m).take()); //takes a message from the queue
+        Message q = queues.get(m).poll();
+        return queues.get(m).take(); //takes a message from the queue
     }
 
 }
