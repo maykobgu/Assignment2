@@ -2,6 +2,7 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.CheckAvailability;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.*;
 
@@ -29,9 +30,12 @@ public class InventoryService extends MicroService {
     @Override
     protected void initialize() {
         subscribeEvent(CheckAvailability.class, this::processEvent);
+        subscribeBroadcast(TerminateBroadcast.class, this::finish);
+
     }
 
     private synchronized void processEvent(CheckAvailability e) {
+        System.out.println(" got CheckAvailability ");
         OrderResult orderResult = null;
         int price = -1;
         int currentAmount = e.getCustomer().getAvailableCreditAmount();
@@ -45,6 +49,10 @@ public class InventoryService extends MicroService {
         if (orderResult == SUCCESSFULLY_TAKEN)
             while (e.getCustomer().getAvailableCreditAmount() !=
                     (currentAmount - inventory.getPrice(e.getBook()))) ;
+    }
+
+    private void finish(TerminateBroadcast e) {
+        terminate();
     }
 
 }

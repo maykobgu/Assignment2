@@ -3,6 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.DeliveryEvent;
 import bgu.spl.mics.application.messages.OrderBookEvent;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.Inventory;
@@ -15,7 +16,7 @@ import java.util.List;
 
 /**
  * APIService is in charge of the connection between a client and the store.
- * It informs the store about desired purchases using {@link BookOrderEvent}.
+ * It informs the store about desired purchases using {@link OrderBookEvent}.
  * This class may not hold references for ob,jects which it is not responsible for:
  * {@link ResourcesHolder}, {@link MoneyRegister}, {@link Inventory}.
  * <p>
@@ -35,6 +36,7 @@ public class APIService extends MicroService {
     @Override
     protected void initialize() {
         subscribeBroadcast(TickBroadcast.class, this::act);
+        subscribeBroadcast(TerminateBroadcast.class, this::finish);
     }
 
     private void act(TickBroadcast e) {
@@ -42,6 +44,7 @@ public class APIService extends MicroService {
             if (orderSchedule.get(i).snd == e.getCurrentTick()) {
                 OrderBookEvent order = new OrderBookEvent(customer, orderSchedule.get(i).fst, e.getCurrentTick());
                 Future result = sendEvent(order); //last result- receipt
+                System.out.println(" gor receipt  "+result.get());
                 if (result != null) {
                     customer.addReceipt((OrderReceipt) result.get());
                     DeliveryEvent deliver = new DeliveryEvent(customer);
@@ -51,4 +54,7 @@ public class APIService extends MicroService {
         }
     }
 
+    private void finish(TerminateBroadcast e) {
+        terminate();
+    }
 }

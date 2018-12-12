@@ -34,10 +34,13 @@ public class MessageBusImpl implements MessageBus {
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
         if (queuesByEvent.get(type) == null) {
             ArrayBlockingQueue arr = new ArrayBlockingQueue<>(1000);
-            queuesByEvent.put(type, arr);
-            Queue q = queuesByEvent.get(type);
-            q.add(m);
-        } else queuesByEvent.get(type).add(m);
+            synchronized (queuesByEvent) {
+                queuesByEvent.put(type, arr);
+                queuesByEvent.get(type).add(m);
+            }
+        } else synchronized (queuesByEvent) {
+            queuesByEvent.get(type).add(m);
+        }
         // TODO capacity?
     }
 
@@ -58,9 +61,9 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void sendBroadcast(Broadcast b) {
-        System.out.println("hi");
-        while (queuesByEvent.get(b) == null || queuesByEvent.get(b).isEmpty()) ;
-        Queue q = queuesByEvent.get(b);
+//        System.out.println("sending broadcast  " + b);
+        while (queuesByEvent.get(b.getClass()) == null || queuesByEvent.get(b.getClass()).isEmpty()) ;
+        Queue q = queuesByEvent.get(b.getClass());
         int size = q.size();
         for (int i = 0; i < size; i++) {
             MicroService m = (MicroService) q.poll();

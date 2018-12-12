@@ -7,6 +7,7 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AcquireVehicleEvent;
 import bgu.spl.mics.application.messages.DeliveryEvent;
 import bgu.spl.mics.application.messages.ReleaseVehicleEvent;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
@@ -29,6 +30,8 @@ public class LogisticsService extends MicroService {
     @Override
     protected void initialize() {
         subscribeEvent(DeliveryEvent.class, this::processEvent);
+        subscribeBroadcast(TerminateBroadcast.class, this::finish);
+
     }
 
     private synchronized void processEvent(DeliveryEvent e) throws InterruptedException {
@@ -38,6 +41,10 @@ public class LogisticsService extends MicroService {
         vehicle.deliver(e.getAdress(), e.getDistance());
         ReleaseVehicleEvent rel = new ReleaseVehicleEvent(vehicle);
         sendEvent(rel);
+    }
+
+    private void finish(TerminateBroadcast e) {
+        terminate();
     }
 
 }
