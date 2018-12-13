@@ -45,10 +45,14 @@ public class SellingService extends MicroService {
                     e.getBookTitle(), (int) price.get(), currentTick, e.getOrderedTick(), currentTick); //make receipt
             moneyRegister.chargeCreditCard(e.getCustomer(), (int) price.get()); //charge the customer for this book
             moneyRegister.file(receipt);
-//            notifyAll();
+            System.out.println(" receipt is done ");
         }
-        System.out.println(" receipt is done ");
-        this.complete((Event) e, receipt);
+        if (receipt == null) {
+            System.out.println(" no receipt so no charge ");
+            this.complete((Event) e, -1);
+        }
+        else
+            this.complete((Event) e, receipt);
     }
 
     private void act(TickBroadcast e) {

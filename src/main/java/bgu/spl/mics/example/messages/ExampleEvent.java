@@ -6,9 +6,11 @@ import bgu.spl.mics.Future;
 public class ExampleEvent implements Event<String>{
 
     private String senderName;
+    private Future future;
 
     public ExampleEvent(String senderName) {
         this.senderName = senderName;
+        future = new Future();
     }
 
     public String getSenderName() {
@@ -17,6 +19,6 @@ public class ExampleEvent implements Event<String>{
 
     @Override
     public Future getFuture() {
-        return null;
+        return future;
     }
 }
