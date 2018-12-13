@@ -10,8 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-    private ConcurrentHashMap<Class, Queue<MicroService>> queuesByEvent;
-    private ConcurrentHashMap<MicroService, ArrayBlockingQueue> queues;
+    private ConcurrentHashMap<Class<? extends Message>, Queue<MicroService>> queuesByEvent;
+    private ConcurrentHashMap<MicroService, ArrayBlockingQueue<Message>> queues;
 
 
     private static class SingletonHolder {
@@ -74,11 +74,13 @@ public class MessageBusImpl implements MessageBus {
     }
 
     @Override
-    public <T> Future<T> sendEvent(Event<T> e) {
-        while (queuesByEvent.get(e) == null || queuesByEvent.get(e).isEmpty()) ;
-        MicroService m = queuesByEvent.get(e).poll(); //get the first micro service
-        queues.get(m).add(e); //find the relevant queue and push the message
-        queuesByEvent.get(e).add(m); //push the micro service back to it's roundRobins queue
+    public synchronized <T> Future<T> sendEvent(Event<T> e) {
+        while (queuesByEvent.get(e.getClass()) == null || queuesByEvent.get(e.getClass()).isEmpty()) ;
+        MicroService m = queuesByEvent.get(e.getClass()).poll(); //get the first micro service
+        Queue q = queues.get(m);
+        q.add(e); //find the relevant queue and push the message
+        Queue q1 = queuesByEvent.get(e.getClass()); //push the micro service back to it's roundRobins queue
+        q1.add(m);
         notifyAll();
         return e.getFuture();
     }
