@@ -34,11 +34,13 @@ public class ResourceService extends MicroService {
     }
 
     private void processEvent(AcquireVehicleEvent e) throws InterruptedException {
+        System.out.println("got a acquireVehicle");
         Future result = instance.acquireVehicle();
         complete((Event) e, result.get());
     }
 
     private void releaseEvent(ReleaseVehicleEvent e) {
+        System.out.println("got a releaseVehicle");
         instance.releaseVehicle(e.getVehicle());
     }
 

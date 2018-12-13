@@ -152,6 +152,7 @@ public abstract class MicroService implements Runnable {
     protected final void terminate() {
         //TICKS
         this.terminated = true;
+        messageBus.unregister(this);
     }
 
     /**
@@ -180,8 +181,9 @@ public abstract class MicroService implements Runnable {
                     e.printStackTrace();
                 }
             }
-
-        } else
+        } else {
             initialize();
+//        System.exit(0);
+        }
     }
 }

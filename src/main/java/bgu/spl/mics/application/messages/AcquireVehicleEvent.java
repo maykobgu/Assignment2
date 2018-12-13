@@ -8,6 +8,8 @@ public class AcquireVehicleEvent implements Event<String> {
     private Future future;
 
     public AcquireVehicleEvent() {
+        future= new Future();
+
     }
 
     public Future getFuture() {

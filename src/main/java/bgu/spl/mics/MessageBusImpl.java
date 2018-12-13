@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MessageBusImpl implements MessageBus {
     private ConcurrentHashMap<Class<? extends Message>, Queue<MicroService>> queuesByEvent;
-    private ConcurrentHashMap<MicroService, ArrayBlockingQueue<Message>> queues;
+    private ConcurrentHashMap<MicroService, ArrayBlockingQueue> queues;
 
 
     private static class SingletonHolder {
@@ -56,7 +56,6 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public <T> void complete(Event<T> e, T result) {
         e.getFuture().resolve(result);
-        notifyAll();
     }
 
     @Override
@@ -64,24 +63,31 @@ public class MessageBusImpl implements MessageBus {
 //        System.out.println("sending broadcast  " + b);
         while (queuesByEvent.get(b.getClass()) == null || queuesByEvent.get(b.getClass()).isEmpty()) ;
         Queue q = queuesByEvent.get(b.getClass());
-        int size = q.size();
-        for (int i = 0; i < size; i++) {
-            MicroService m = (MicroService) q.poll();
-            queues.get(m).add(b);
-            q.add(m);
+        synchronized (q) {
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                MicroService m = (MicroService) q.poll();
+                queues.get(m).add(b);
+                q.add(m);
+            }
         }
 //        notifyAll();
     }
 
     @Override
-    public synchronized <T> Future<T> sendEvent(Event<T> e) {
+    public <T> Future<T> sendEvent(Event<T> e) {
         while (queuesByEvent.get(e.getClass()) == null || queuesByEvent.get(e.getClass()).isEmpty()) ;
         MicroService m = queuesByEvent.get(e.getClass()).poll(); //get the first micro service
-        Queue q = queues.get(m);
-        q.add(e); //find the relevant queue and push the message
-        Queue q1 = queuesByEvent.get(e.getClass()); //push the micro service back to it's roundRobins queue
-        q1.add(m);
-        notifyAll();
+        ArrayBlockingQueue q = queues.get(m);
+        synchronized (q) {
+            try {
+                q.put(e); //find the relevant queue and push the message
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+            queuesByEvent.get(e.getClass()).add(m);
+        }//push the micro service back to it's roundRobins queue
+//        while (e.getFuture().get() == null) ;
         return e.getFuture();
     }
 

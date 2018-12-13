@@ -57,7 +57,26 @@ public class BookStoreRunner {
             int speed = vehicles.get(i).getAsJsonObject().get("speed").getAsInt();
             vehiclesList[i] = new DeliveryVehicle(license, speed);
         }
-
+        // logistics Threads
+        for (int i = 0; i < numOflogistics; i++) {
+            Thread t = new Thread(new LogisticsService());
+            t.start();
+        }
+        // resources Threads
+        for (int i = 0; i < numOfresourcesService; i++) {
+            Thread t = new Thread(new ResourceService(vehiclesList));
+            t.start();
+        }
+        // inventory Threads
+        for (int i = 0; i < numOfinventoryService; i++) {
+            Thread t = new Thread(new InventoryService(inventory));
+            t.start();
+        }
+        // selling Threads
+        for (int i = 0; i < numOfSelling; i++) {
+            Thread t = new Thread(new SellingService());
+            t.start();
+        }
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
             int id = element.getAsJsonObject().get("id").getAsInt();
@@ -78,28 +97,8 @@ public class BookStoreRunner {
             index++;
         }
         // API Threads
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < Customers.length; i++) {
             Thread t = new Thread(new APIService(Customers[i]));
-            t.start();
-        }
-        // logistics Threads
-        for (int i = 0; i < 1; i++) {
-            Thread t = new Thread(new LogisticsService());
-            t.start();
-        }
-        // resources Threads
-        for (int i = 0; i < 1; i++) {
-            Thread t = new Thread(new ResourceService(vehiclesList));
-            t.start();
-        }
-        // inventory Threads
-        for (int i = 0; i < 1; i++) {
-            Thread t = new Thread(new InventoryService(inventory));
-            t.start();
-        }
-        // selling Threads
-        for (int i = 0; i < 1; i++) {
-            Thread t = new Thread(new SellingService());
             t.start();
         }
 
