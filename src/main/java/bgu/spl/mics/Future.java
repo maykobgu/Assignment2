@@ -30,7 +30,7 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not wait until it is available.
      */
     public T get() {
-        while (!isDone());
+        while (!isDone()) ;
         return result;
     }
 
@@ -65,7 +65,7 @@ public class Future<T> {
     public T get(long timeout, TimeUnit unit) {
         while (result == null) {
             try {
-                wait(unit.toMillis(timeout));
+                unit.sleep(timeout);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
