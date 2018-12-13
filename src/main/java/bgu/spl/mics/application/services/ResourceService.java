@@ -3,6 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.AcquireVehicleEvent;
 import bgu.spl.mics.application.messages.ReleaseVehicleEvent;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
@@ -28,6 +29,8 @@ public class ResourceService extends MicroService {
     protected void initialize() {
         subscribeEvent(AcquireVehicleEvent.class, this::processEvent);
         subscribeEvent(ReleaseVehicleEvent.class, this::releaseEvent);
+        subscribeBroadcast(TerminateBroadcast.class, this::finish);
+
     }
 
     private void processEvent(AcquireVehicleEvent e) throws InterruptedException {
@@ -37,5 +40,9 @@ public class ResourceService extends MicroService {
 
     private void releaseEvent(ReleaseVehicleEvent e) {
         instance.releaseVehicle(e.getVehicle());
+    }
+
+    private void finish(TerminateBroadcast e) {
+        terminate();
     }
 }

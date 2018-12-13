@@ -39,7 +39,7 @@ public abstract class MicroService implements Runnable {
      */
     public MicroService(String name) {
         this.name = name;
-        terminated=false;
+        terminated = false;
         callbacks = new ConcurrentHashMap<>();
         messageBus = MessageBusImpl.getInstance();
     }
@@ -175,7 +175,7 @@ public abstract class MicroService implements Runnable {
                 try {
                     Message message = messageBus.awaitMessage(this);
                     Callback c = callbacks.get(message.getClass());
-                    c.call(message.getClass());
+                    c.call(message);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

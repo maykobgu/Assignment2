@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MessageBusImpl implements MessageBus {
     private ConcurrentHashMap<Class, Queue<MicroService>> queuesByEvent;
-    private ConcurrentHashMap<MicroService, ArrayBlockingQueue<Message>> queues;
+    private ConcurrentHashMap<MicroService, ArrayBlockingQueue> queues;
 
 
     private static class SingletonHolder {
@@ -38,7 +38,9 @@ public class MessageBusImpl implements MessageBus {
                 queuesByEvent.put(type, arr);
                 queuesByEvent.get(type).add(m);
             }
-        } else synchronized (queuesByEvent) {queuesByEvent.get(type).add(m);};
+        } else synchronized (queuesByEvent) {
+            queuesByEvent.get(type).add(m);
+        }
         // TODO capacity?
     }
 
@@ -59,9 +61,9 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void sendBroadcast(Broadcast b) {
-        System.out.println("hi");
-        while (queuesByEvent.get(b) == null || queuesByEvent.get(b).isEmpty()) ;
-        Queue q = queuesByEvent.get(b);
+//        System.out.println("sending broadcast  " + b);
+        while (queuesByEvent.get(b.getClass()) == null || queuesByEvent.get(b.getClass()).isEmpty()) ;
+        Queue q = queuesByEvent.get(b.getClass());
         int size = q.size();
         for (int i = 0; i < size; i++) {
             MicroService m = (MicroService) q.poll();
@@ -97,8 +99,7 @@ public class MessageBusImpl implements MessageBus {
     public Message awaitMessage(MicroService m) throws InterruptedException {
         if (queues.get(m) == null)
             throw new NullPointerException();
-        Message q = queues.get(m).poll();
-        return queues.get(m).take(); //takes a message from the queue
+        return (Message) (queues.get(m).take()); //takes a message from the queue
     }
 
 }
