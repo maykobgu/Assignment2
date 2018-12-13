@@ -35,7 +35,6 @@ public class InventoryService extends MicroService {
     }
 
     private synchronized void processEvent(CheckAvailability e) {
-        System.out.println(" got CheckAvailability ");
         OrderResult orderResult = null;
         int price = -1;
         int currentAmount = e.getCustomer().getAvailableCreditAmount();

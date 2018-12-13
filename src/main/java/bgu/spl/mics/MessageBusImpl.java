@@ -87,7 +87,6 @@ public class MessageBusImpl implements MessageBus {
             }
             queuesByEvent.get(e.getClass()).add(m);
         }//push the micro service back to it's roundRobins queue
-//        while (e.getFuture().get() == null) ;
         return e.getFuture();
     }
 
@@ -96,6 +95,7 @@ public class MessageBusImpl implements MessageBus {
     public void register(MicroService m) {
         // TODO capacity?
         queues.put(m, new ArrayBlockingQueue<>(100));
+        queues.get(0);
     }
 
     @Override
