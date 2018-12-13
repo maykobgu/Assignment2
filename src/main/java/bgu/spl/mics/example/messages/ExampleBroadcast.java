@@ -10,7 +10,7 @@ public class ExampleBroadcast implements Broadcast {
 
     public ExampleBroadcast(String senderId) {
         this.senderId = senderId;
-        future = new Future();
+        future = null;
 
     }
 

@@ -67,6 +67,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
+        System.out.println("Micro service subscribeEvent");
         callbacks.put(type, callback);
         messageBus.subscribeEvent(type, this);
     }
@@ -93,6 +94,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
+        System.out.println("Micro service subscribeBroadcast");
         callbacks.put(type, callback);
         messageBus.subscribeBroadcast(type, this);
     }
@@ -111,6 +113,7 @@ public abstract class MicroService implements Runnable {
      * null in case no micro-service has subscribed to {@code e.getClass()}.
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
+        System.out.println("Micro service sendEvent");
         return messageBus.sendEvent(e);
     }
 
@@ -122,6 +125,7 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
+        System.out.println("Micro service sendBroadcast");
         messageBus.sendBroadcast(b);
     }
 
@@ -137,6 +141,7 @@ public abstract class MicroService implements Runnable {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
+        System.out.println("Micro service complete");
         messageBus.complete(e, result);
     }
 
@@ -150,7 +155,7 @@ public abstract class MicroService implements Runnable {
      * message.
      */
     protected final void terminate() {
-        //TICKS
+        System.out.println("Micro service terminate");
         this.terminated = true;
         messageBus.unregister(this);
     }

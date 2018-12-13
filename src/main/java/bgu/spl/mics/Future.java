@@ -34,6 +34,9 @@ public class Future<T> {
         return result;
     }
 
+
+
+
     /**
      * Resolves the result of this Future object.
      */
@@ -62,15 +65,18 @@ public class Future<T> {
      * wait for {@code timeout} TimeUnits {@code unit}. If time has
      * elapsed, return null.
      */
-    public T get(long timeout, TimeUnit unit) {
-        while (result == null) {
-            try {
-                wait(unit.toMillis(timeout));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    public T get(long timeout, TimeUnit unit) { // i change that, because we had an error
+        synchronized (this) {
+            while (!isDone()) {
+                try {
+                    wait(unit.toSeconds(timeout));
+                    return result;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            return result;
         }
-        return result;
     }
 
 }

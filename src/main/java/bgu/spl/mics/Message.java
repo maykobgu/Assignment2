@@ -9,5 +9,7 @@ package bgu.spl.mics;
  */
 public interface Message {
     Future getFuture();
+    void setFuture();
+
 
 }

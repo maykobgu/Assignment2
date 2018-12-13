@@ -19,4 +19,8 @@ public class FiftyPercentDiscount implements Broadcast {
     public Future getFuture() {
         return future;
     }
+
+    public void setFuture(Future future) {
+        this.future = future;
+    }
 }

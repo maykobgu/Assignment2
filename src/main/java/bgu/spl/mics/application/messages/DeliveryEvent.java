@@ -20,6 +20,9 @@ public class DeliveryEvent implements Event<String> {
     public Future getFuture() {
         return future;
     }
+    public void setFuture(Future future) {
+        this.future = future;
+    }
 
     public String getAdress() {
         return adress;

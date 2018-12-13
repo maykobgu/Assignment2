@@ -10,7 +10,7 @@ public class ExampleEvent implements Event<String>{
 
     public ExampleEvent(String senderName) {
         this.senderName = senderName;
-        future = new Future();
+        future = null;
     }
 
     public String getSenderName() {
@@ -19,6 +19,8 @@ public class ExampleEvent implements Event<String>{
 
     @Override
     public Future getFuture() {
+        if (future == null)
+            future = new Future();
         return future;
     }
 }
