@@ -35,6 +35,7 @@ public class LogisticsService extends MicroService {
     }
 
     private synchronized void processEvent(DeliveryEvent e) throws InterruptedException {
+        System.out.println("got a delivery");
         AcquireVehicleEvent acq = new AcquireVehicleEvent();
         Future result = sendEvent(acq);
         DeliveryVehicle vehicle = (DeliveryVehicle) result.get();

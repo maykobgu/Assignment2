@@ -17,10 +17,11 @@ import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class ResourceService extends MicroService {
-    private static ResourcesHolder instance = ResourcesHolder.getInstance();
+    private static ResourcesHolder instance;
 
     public ResourceService(DeliveryVehicle[] vehicles) {
         super("ResourceService");
+        instance = ResourcesHolder.getInstance();
         instance.load(vehicles);
     }
 
@@ -33,11 +34,13 @@ public class ResourceService extends MicroService {
     }
 
     private void processEvent(AcquireVehicleEvent e) throws InterruptedException {
+        System.out.println("got a acquireVehicle");
         Future result = instance.acquireVehicle();
         complete((Event) e, result.get());
     }
 
     private void releaseEvent(ReleaseVehicleEvent e) {
+        System.out.println("got a releaseVehicle");
         instance.releaseVehicle(e.getVehicle());
     }
 

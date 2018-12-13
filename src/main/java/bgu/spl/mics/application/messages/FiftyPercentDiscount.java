@@ -9,6 +9,8 @@ public class FiftyPercentDiscount implements Broadcast {
 
     public FiftyPercentDiscount(String senderId) {
         this.senderId = senderId;
+        future= new Future();
+
     }
 
     public String getSenderId() {

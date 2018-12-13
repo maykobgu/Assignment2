@@ -38,9 +38,9 @@ public class ResourcesHolder {
      * {@link DeliveryVehicle} when completed.
      */
     public Future<DeliveryVehicle> acquireVehicle() throws InterruptedException {
-        while (!s.tryAcquire()) ;
-        s.acquire();
-        Future result = null;
+        while (!s.tryAcquire());
+        System.out.println("acquired Vehicle");
+        Future result = new Future();
         boolean found = false;
         for (int i = 0; i < vehicles.length & !found; i++) {
             if (vehicles[i].isAvailable()) {
@@ -60,6 +60,8 @@ public class ResourcesHolder {
      * @param vehicle {@link DeliveryVehicle} to be released.
      */
     public void releaseVehicle(DeliveryVehicle vehicle) {
+        System.out.println("vehicle released");
+        vehicle.setAvailable();
         s.release();
     }
 

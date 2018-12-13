@@ -11,9 +11,9 @@ import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 /**
  * Selling service in charge of taking orders from customers.
  * Holds a reference to the {@link MoneyRegister} singleton of the store.
- * Handles {@link BookOrderEvent}.
+ * Handles {@link OrderBookEvent}.
  * This class may not hold references for objects which it is not responsible for:
- * {@link ResourcesHolder}, {@link Inventory}.
+ * {@link bgu.spl.mics.application.passiveObjects.ResourcesHolder}, {@link bgu.spl.mics.application.passiveObjects.Inventory}.
  * <p>
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
@@ -37,6 +37,7 @@ public class SellingService extends MicroService {
     private void processEvent(OrderBookEvent e) {
         System.out.println(" got OrderBookEvent ");
         CheckAvailability check = new CheckAvailability(e.getCustomer(), e.getBookTitle());
+        System.out.println(" CheckAvailability is done ");
         Future price = sendEvent(check);
         OrderReceipt receipt = null;
         if ((int) price.get() != -1) {
@@ -44,8 +45,9 @@ public class SellingService extends MicroService {
                     e.getBookTitle(), (int) price.get(), currentTick, e.getOrderedTick(), currentTick); //make receipt
             moneyRegister.chargeCreditCard(e.getCustomer(), (int) price.get()); //charge the customer for this book
             moneyRegister.file(receipt);
-            notifyAll();
+//            notifyAll();
         }
+        System.out.println(" receipt is done ");
         this.complete((Event) e, receipt);
     }
 

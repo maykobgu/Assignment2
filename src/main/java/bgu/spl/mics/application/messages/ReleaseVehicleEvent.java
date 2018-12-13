@@ -10,6 +10,8 @@ public class ReleaseVehicleEvent implements Event<String> {
 
     public ReleaseVehicleEvent(DeliveryVehicle v) {
         vehicle = v;
+        future= new Future();
+
     }
 
     public Future getFuture() {

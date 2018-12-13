@@ -12,6 +12,8 @@ public class TickBroadcast implements Broadcast {
 
     public TickBroadcast(int tickNumber) {
         this.tickNumber=tickNumber;
+        future= new Future();
+
     }
 
     public int getCurrentTick(){

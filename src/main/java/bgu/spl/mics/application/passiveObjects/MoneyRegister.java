@@ -3,6 +3,7 @@ package bgu.spl.mics.application.passiveObjects;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -28,6 +29,10 @@ public class MoneyRegister {
      */
     public static MoneyRegister getInstance() {
         return MoneyRegister.SingletonHolder.instance;
+    }
+
+    private MoneyRegister(){
+        receiptlist= new LinkedList<>();
     }
 
     /**

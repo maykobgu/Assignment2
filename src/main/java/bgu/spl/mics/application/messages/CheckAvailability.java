@@ -12,6 +12,7 @@ public class CheckAvailability implements Event<String> {
     public CheckAvailability(Customer customer, String book) {
         this.customer = customer;
         this.book = book;
+        future= new Future();
     }
 
     public String getBook() {
