@@ -45,6 +45,8 @@ public class InventoryService extends MicroService {
                 price = inventory.getPrice(e.getBook());
             }
         }
+        if (price == -1)
+            System.out.println("customer doesn't have enough money");
         this.complete((Event) e, price);
         if (orderResult == SUCCESSFULLY_TAKEN)
             while (e.getCustomer().getAvailableCreditAmount() !=

@@ -6,9 +6,12 @@ import bgu.spl.mics.Future;
 public class ExampleBroadcast implements Broadcast {
 
     private String senderId;
+    private Future future;
 
     public ExampleBroadcast(String senderId) {
         this.senderId = senderId;
+        future = new Future();
+
     }
 
     public String getSenderId() {
@@ -17,6 +20,6 @@ public class ExampleBroadcast implements Broadcast {
 
     @Override
     public Future getFuture() {
-        return null;
+        return future;
     }
 }
