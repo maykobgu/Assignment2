@@ -5,6 +5,7 @@ import bgu.spl.mics.Future;
 public class ExampleEvent implements Event<String> {
 private Future future;
     private String senderName;
+    private Future future;
 
     public ExampleEvent(String senderName) {
         this.senderName = senderName;
