@@ -13,6 +13,8 @@ public class DeliveryEvent implements Event<String> {
     public DeliveryEvent(Customer customer) {
         this.adress = customer.getAddress();
         this.distance = customer.getDistance();
+        future= new Future();
+
     }
 
     public Future getFuture() {

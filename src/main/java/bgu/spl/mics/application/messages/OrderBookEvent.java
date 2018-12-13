@@ -14,6 +14,8 @@ public class OrderBookEvent implements Event<String> {
         this.customer = customer;
         this.bookTitle = bookTitle;
         this.orderedTick=orderedTick;
+        future= new Future();
+
     }
 
     public Customer getCustomer() {
@@ -22,6 +24,7 @@ public class OrderBookEvent implements Event<String> {
 
     public int getOrderedTick() {
         return orderedTick;
+
     }
 
     public String getBookTitle() {

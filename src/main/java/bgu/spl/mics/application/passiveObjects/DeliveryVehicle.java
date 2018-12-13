@@ -49,14 +49,19 @@ public class DeliveryVehicle {
      * @param distance The distance from the store to the customer.
      */
     public synchronized void deliver(String address, int distance) throws InterruptedException {
+        System.out.println("i'm driving");
         long deliveryDuration = distance * getSpeed();
         sleep(deliveryDuration);
         available = true;
+        System.out.println("i'm done driving");
         notifyAll();
     }
 
     public boolean isAvailable() {
         return available;
+    }
+    public void setAvailable() {
+        available = true;
     }
 
 

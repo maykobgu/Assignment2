@@ -8,7 +8,8 @@ public class TerminateBroadcast implements Broadcast {
     private Future future;
 
     public TerminateBroadcast() {
-        future = null;
+        future= new Future();
+
     }
 
     public Future getFuture() {

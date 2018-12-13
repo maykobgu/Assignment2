@@ -2,6 +2,7 @@ package bgu.spl.mics.application.passiveObjects;
 
 import com.sun.tools.javac.util.Pair;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -29,6 +30,7 @@ public class Customer {
         this.creditCard = creditCard;
         this.availableAmountInCreditCard = availableAmountInCreditCard;
         this.orderSchedule = orderSchedule;
+        receipts = new LinkedList<>();
     }
 
     /**
