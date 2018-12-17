@@ -53,6 +53,8 @@ public class APIService extends MicroService {
                     sendEvent(deliver); //does not need to wait
                     System.out.println(this.getName()+ "sent event "+ deliver);
                 }
+                else
+                    System.out.println(this.getName()+" I couldnt produce delivery event");
             }
         }
     }

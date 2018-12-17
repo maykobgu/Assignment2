@@ -32,7 +32,8 @@ public class LogisticsService extends MicroService {
     }
 
     private void processEvent(DeliveryEvent e) throws InterruptedException {
-        System.out.println(this.toString());
+        System.out.println(this.getName()+" I got the event "+ e);
+//        System.out.println(this.toString());
         AcquireVehicleEvent acq = new AcquireVehicleEvent();
         System.out.println(this.getName()+ "sending the event"+ acq);
         Future result = sendEvent(acq);

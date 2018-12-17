@@ -47,8 +47,9 @@ public class ResourceService extends MicroService {
     }
 
     private void releaseEvent(ReleaseVehicleEvent e) {
-        System.out.println("got a releaseVehicle");
+        System.out.println(this.getName()+ " got a releaseVehicle");
         instance.releaseVehicle(e.getVehicle());
+        System.out.println(this.getName()+ " I used releasevehicle method");
         complete(e, null);
     }
 
