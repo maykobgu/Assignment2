@@ -35,8 +35,6 @@ public class OrderBookEvent implements Event<String> {
     public Future getFuture() {
         return future;
     }
-    public void setFuture(Future future) {
-        this.future = future;
-    }
+
 
 }

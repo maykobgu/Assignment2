@@ -16,9 +16,6 @@ public class AcquireVehicleEvent implements Event<String> {
         return future;
     }
 
-    public void setFuture(Future future) {
-        this.future = future;
-    }
 
 
 }

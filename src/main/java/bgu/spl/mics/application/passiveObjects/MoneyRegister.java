@@ -15,7 +15,7 @@ import java.util.List;
  * <p>
  * You can add ONLY private fields and methods to this class as you see fit.
  */
-public class MoneyRegister {
+public class MoneyRegister implements Serializable{
     private List<OrderReceipt> receiptlist;
     private int TotalEarnings = 0;
     private static int counter = 0;
@@ -68,21 +68,17 @@ public class MoneyRegister {
      * currently in the MoneyRegister
      * This method is called by the main method in order to generate the output..
      */
-    public void printOrderReceipts(String filename) {
-        Writer writer = null;
+    public void printOrderReceipts(String filename) throws IOException {
+        FileOutputStream file =new FileOutputStream(filename);
+        ObjectOutputStream stream = null;
         try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename + ".txt"), "utf-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            writer.write(receiptlist.toString());
+            stream = new ObjectOutputStream(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //TODO check!!!!!!!!!!!!!!!
+        stream.writeObject(receiptlist);
+        stream.close();
+        file.close();
     }
 
     public static OrderReceipt createReceipt(String seller, int customer, String bookTitle, int price, int issuedTick, int orderTick, int proccessTick) {

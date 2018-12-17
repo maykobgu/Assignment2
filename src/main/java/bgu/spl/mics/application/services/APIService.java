@@ -9,10 +9,11 @@ import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
-import com.sun.tools.javac.util.Pair;
+import javafx.util.Pair;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 
 import java.util.List;
+
 
 /**
  * APIService is in charge of the connection between a client and the store.
@@ -27,8 +28,9 @@ public class APIService extends MicroService {
     private Customer customer;
     private List<Pair<String, Integer>> orderSchedule;
 
-    public APIService(Customer customer) {
-        super("APIService");
+    public APIService(Customer customer,String name) {
+//        super("APIService");
+        super(name);
         this.customer = customer;
         orderSchedule = customer.getOrderSchedule();
     }
@@ -41,15 +43,15 @@ public class APIService extends MicroService {
 
     private void act(TickBroadcast e) {
         for (int i = 0; i < orderSchedule.size(); i++) {
-            if (orderSchedule.get(i).snd == e.getCurrentTick()) {
-                OrderBookEvent order = new OrderBookEvent(customer, orderSchedule.get(i).fst, e.getCurrentTick());
+            if (orderSchedule.get(i).getValue() == e.getCurrentTick()) {
+                OrderBookEvent order = new OrderBookEvent(customer, orderSchedule.get(i).getKey(), e.getCurrentTick());
                 Future result = sendEvent(order); //last result- receipt
+                System.out.println(this.getName() +"Sent event "+ order);
                 if (!result.get().equals(-1)) {
-                    if (!result.get().equals(-1)) {
-                        customer.addReceipt((OrderReceipt) result.get());
-                        DeliveryEvent deliver = new DeliveryEvent(customer);
-                        sendEvent(deliver); //does not need to wait
-                    }
+                    customer.addReceipt((OrderReceipt) result.get());
+                    DeliveryEvent deliver = new DeliveryEvent(customer);
+                    sendEvent(deliver); //does not need to wait
+                    System.out.println(this.getName()+ "sent event "+ deliver);
                 }
             }
         }

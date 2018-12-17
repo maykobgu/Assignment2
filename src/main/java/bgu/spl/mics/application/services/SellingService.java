@@ -22,8 +22,8 @@ public class SellingService extends MicroService {
     private MoneyRegister moneyRegister = MoneyRegister.getInstance();
     private int currentTick;
 
-    public SellingService() {
-        super("SellingService");
+    public SellingService(String name) {
+        super(name);
     }
 
     @Override
@@ -31,12 +31,13 @@ public class SellingService extends MicroService {
         subscribeEvent(OrderBookEvent.class, this::processEvent);
         subscribeBroadcast(TickBroadcast.class, this::act);
         subscribeBroadcast(TerminateBroadcast.class, this::finish);
-
     }
 
     private void processEvent(OrderBookEvent e) {
+        System.out.println(this.getName()+" got an orderBookevent");
         CheckAvailability check = new CheckAvailability(e.getCustomer(), e.getBookTitle());
         Future price = sendEvent(check); //should be price
+        System.out.println("the price is:  "+price.get());
         OrderReceipt receipt = null;
         if ((int) price.get() != -1) {
             receipt = MoneyRegister.createReceipt(e.getCustomer().getName(), e.getCustomer().getId(),

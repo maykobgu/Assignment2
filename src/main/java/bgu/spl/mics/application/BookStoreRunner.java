@@ -1,13 +1,12 @@
 package bgu.spl.mics.application;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
-import bgu.spl.mics.application.passiveObjects.Customer;
-import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
-import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
+import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.services.LogisticsService;
 import bgu.spl.mics.application.services.ResourceService;
 import bgu.spl.mics.application.services.APIService;
@@ -19,18 +18,22 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import com.sun.tools.javac.util.Pair;
+import javafx.util.Pair;
+
+import static java.lang.Thread.sleep;
 
 /**
  * This is the Main class of the application. You should parse the input file,
  * create the different instances of the objects, and run the system.
  * In the end, you should output serialized objects.
  */
-public class BookStoreRunner {
-    public static void main(String[] args) throws FileNotFoundException {
+public class BookStoreRunner implements Serializable {
+    public static void main(String[] args) throws IOException {
+        LinkedList<Thread> threads = new LinkedList<>();
         int index = 0;
         JsonParser parser = new JsonParser();
-        String path = "/Users/maykogan/Desktop/input.json";
+        String path = "/Users/meshiy/Downloads/inputs/2.json";
+//        String path = args[0];
         JsonArray initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
         JsonElement initialResources = parser.parse(getReader(path)).getAsJsonObject().get("initialResources").getAsJsonArray().get(0);
         JsonArray vehicles = initialResources.getAsJsonObject().get("vehicles").getAsJsonArray();
@@ -57,26 +60,9 @@ public class BookStoreRunner {
             int speed = vehicles.get(i).getAsJsonObject().get("speed").getAsInt();
             vehiclesList[i] = new DeliveryVehicle(license, speed);
         }
-        // logistics Threads
-        for (int i = 0; i < numOflogistics; i++) {
-            Thread t = new Thread(new LogisticsService());
-            t.start();
-        }
-        // resources Threads
-        for (int i = 0; i < numOfresourcesService; i++) {
-            Thread t = new Thread(new ResourceService(vehiclesList));
-            t.start();
-        }
-        // inventory Threads
-        for (int i = 0; i < numOfinventoryService; i++) {
-            Thread t = new Thread(new InventoryService(inventory));
-            t.start();
-        }
-        // selling Threads
-        for (int i = 0; i < numOfSelling; i++) {
-            Thread t = new Thread(new SellingService());
-            t.start();
-        }
+
+        //customers output:
+        HashMap customersHashMap = new HashMap();
         Customer[] Customers = new Customer[customers.size()];
         for (JsonElement element : customers) {
             int id = element.getAsJsonObject().get("id").getAsInt();
@@ -93,18 +79,82 @@ public class BookStoreRunner {
                 orderSchedule.add(pair);
             }
             Customer customer = new Customer(id, name, address, distance, creditCardNumber, creditCardAmount, orderSchedule);
+            customersHashMap.put(id, customer);
             Customers[index] = customer;
             index++;
         }
+
+        // logistics Threads
+        for (int i = 0; i < numOflogistics; i++) {
+            Thread t = new Thread(new LogisticsService("LogisticsService " + i));
+            t.start();
+            threads.add(t);
+        }
+        // resources Threads
+        for (int i = 0; i < numOfresourcesService; i++) {
+            Thread t = new Thread(new ResourceService(vehiclesList, "ResourceService "+ i));
+            t.start();
+            threads.add(t);
+        }
+        // inventory Threads
+        for (int i = 0; i < numOfinventoryService; i++) {
+            Thread t = new Thread(new InventoryService(inventory, "InventoryService "+ i));
+            t.start();
+            threads.add(t);
+
+        }
+        // selling Threads
+        for (int i = 0; i < numOfSelling; i++) {
+            Thread t = new Thread(new SellingService("SellingService "+ i));
+            t.start();
+            threads.add(t);
+        }
+
         // API Threads
         for (int i = 0; i < Customers.length; i++) {
-            Thread t = new Thread(new APIService(Customers[i]));
+            Thread t = new Thread(new APIService(Customers[i], "APIService "+i));
             t.start();
+            threads.add(t);
         }
 
         // TimeService Thread
-        Thread timeServiceThread = new Thread(new TimeService(duration, timeSpeed));
+        TimeService t = new TimeService(duration, timeSpeed, "TimeService");
+        Thread timeServiceThread = new Thread(t);
         timeServiceThread.start();
+        threads.add(timeServiceThread);
+
+
+        int counter = 1;
+        for (Thread thread : threads) {
+            try {
+                System.out.println(thread.getState());
+                thread.join();
+                System.out.println(" thread "+counter);
+                counter++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+//
+//        //customers
+//        FileOutputStream file = new FileOutputStream(args[1]);
+//        ObjectOutputStream stream = new ObjectOutputStream(file);
+//        stream.writeObject(customersHashMap);
+//
+//        //inventory
+//        Inventory.getInstance().printInventoryToFile(args[2]);
+//
+//        //receipts
+//        MoneyRegister.getInstance().printOrderReceipts(args[3]);
+//
+//        // moneyRegister
+//        FileOutputStream file3 = new FileOutputStream(args[4]);
+//        ObjectOutputStream stream3 = new ObjectOutputStream(file3);
+//        stream3.writeObject(MoneyRegister.getInstance());
+//        stream3.close();
+//        file3.close();
+//        stream.close();
+//        file.close();
     }
 
     private static int getNumOfInstances(JsonElement services, String field) {

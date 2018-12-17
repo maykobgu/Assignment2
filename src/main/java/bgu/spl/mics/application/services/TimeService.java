@@ -26,31 +26,36 @@ public class TimeService extends MicroService {
     private int currentTick; //how many ticks
 
 
-    public TimeService(int duration, int speed) {
-        super("TimeService");
+    public TimeService(int duration, int speed, String name) {
+        super(name);
         this.speed = speed;
         this.duration = duration;
-        currentTick = 0;
+        currentTick = 1;
     }
 
     @Override
     protected void initialize() {
+        subscribeBroadcast(TerminateBroadcast.class, this::act);
         Timer time = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
                 if (currentTick < duration) {
-                    currentTick++;
                     System.out.println("Tick number: " + currentTick);
                     TickBroadcast tickMessage = new TickBroadcast(currentTick);
                     sendBroadcast(tickMessage);
+                    currentTick++;
                 } else {
                     sendBroadcast(new TerminateBroadcast());
-                    terminate();
                     time.cancel();
+                    cancel();
                 }
             }
         };
         time.schedule(task, 0, speed);
+    }
+
+    private void act(TerminateBroadcast e) {
+        terminate();
     }
 }

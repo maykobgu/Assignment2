@@ -13,9 +13,7 @@ public class ReleaseVehicleEvent implements Event<String> {
         future= new Future();
 
     }
-    public void setFuture(Future future) {
-        this.future = future;
-    }
+
     public Future getFuture() {
         return future;
     }

@@ -1,6 +1,7 @@
 package bgu.spl.mics;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Thread.sleep;
 
@@ -13,12 +14,14 @@ import static java.lang.Thread.sleep;
  * No public constructor is allowed except for the empty constructor.
  */
 public class Future<T> {
-    private T result = null;
+    private AtomicReference<T >result = new AtomicReference<>();
+    private volatile boolean done;
 
     /**
      * This should be the the only public constructor in this class.
      */
     public Future() {
+        done = false;
     }
 
     /**
@@ -30,24 +33,23 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not wait until it is available.
      */
     public T get() {
-        while (!isDone()) ;
-        return result;
+            while (!isDone()) ;
+            return result.get();
     }
 
     /**
      * Resolves the result of this Future object.
      */
     public void resolve(T result) {
-        this.result = result;
+        this.result.getAndSet(result);
+        done = true;
     }
 
     /**
      * @return true if this object has been resolved, false otherwise
      */
     public boolean isDone() {
-        if (result != null)
-            return true;
-        return false;
+        return done;
     }
 
     /**
@@ -63,23 +65,15 @@ public class Future<T> {
      * elapsed, return null.
      */
     public T get(long timeout, TimeUnit unit) {
-        while (result == null) {
+        while (!isDone()) {
             try {
                 unit.sleep(timeout);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        return result;
+        return result.get();
 
-//        while (result == null) {
-//            try {
-//                wait(unit.toMillis(timeout));
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return result;
     }
 
 }
