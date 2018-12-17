@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MessageBusImpl implements MessageBus {
     private ConcurrentHashMap<Class<? extends Message>, Queue<MicroService>> queuesByEvent;
-    private ConcurrentHashMap<MicroService, ArrayBlockingQueue> queues;
+    private ConcurrentHashMap<MicroService, ArrayBlockingQueue<Message>> queues;
     private ConcurrentHashMap<MicroService, LinkedList<Class<? extends Message>>> eventMapping;
     private ConcurrentHashMap<MicroService, LinkedList<Class<? extends Message>>> broadcastMapping;
 
@@ -87,7 +87,9 @@ public class MessageBusImpl implements MessageBus {
                 int size = q.size();
                 for (int i = 0; i < size; i++) {
                     MicroService m = (MicroService) q.poll();
-                    queues.get(m).add(b);
+                    Queue tmp = queues.get(m);
+                    if (tmp != null)
+                        tmp.add(b);
                     q.add(m);
                 }
             }
@@ -98,37 +100,42 @@ public class MessageBusImpl implements MessageBus {
     public <T> Future<T> sendEvent(Event<T> e) {
         if (queuesByEvent.get(e.getClass()) != null && !queuesByEvent.get(e.getClass()).isEmpty()) {
             synchronized (queuesByEvent) {
-                if (queuesByEvent.get(e.getClass()) != null && !queuesByEvent.get(e.getClass()).isEmpty()) {
-                    MicroService m = queuesByEvent.get(e.getClass()).poll(); //get the first micro service
-                    ArrayBlockingQueue q = queues.get(m);
-                    if (q != null) {
-                        synchronized (q) {
-                            try {
-                                q.put(e); //find the relevant queue and push the message
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }
-                            queuesByEvent.get(e.getClass()).add(m);
+                MicroService m = queuesByEvent.get(e.getClass()).poll(); //get the first micro service
+                ArrayBlockingQueue q = queues.get(m);
+                if (q != null) {
+                    synchronized (q) {
+                        try {
+                            q.put(e); //find the relevant queue and push the message
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
                         }
-                    }//push the micro service back to it's roundRobins queue
-                    return e.getFuture();
-                }
+                        queuesByEvent.get(e.getClass()).add(m);
+                    }
+                }//push the micro service back to it's roundRobins queue
             }
-        }
-        return null;
+        } else
+            complete(e, null);
+        return e.getFuture();
     }
 
     @Override
     public void register(MicroService m) {
-        // TODO capacity?
         queues.put(m, new ArrayBlockingQueue<>(100));
     }
 
     @Override
     public void unregister(MicroService m) {
+        System.out.println("Starting to unregister "+m.getName());
+        Queue q = queues.get(m);
+        for (int i = 0; i < q.size(); i++) {
+            Message message = (Message) q.poll();
+            if (message instanceof Event)
+                complete((Event) message, null);
+        }
         queues.remove(m);
         unregisterHelper(eventMapping, m);
         unregisterHelper(broadcastMapping, m);
+        System.out.println(("Finished to unregister "+m.getName()));
     }
 
 

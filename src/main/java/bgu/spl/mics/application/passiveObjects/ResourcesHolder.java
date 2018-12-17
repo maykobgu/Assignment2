@@ -2,6 +2,8 @@ package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -15,10 +17,19 @@ import java.util.concurrent.Semaphore;
  */
 public class ResourcesHolder {
     private static DeliveryVehicle[] vehicles; //Holds a collection of DeliveryVehicle
-    private static Semaphore s;
+    private static Queue<Future> vehicleRequests;
+    private static Queue<DeliveryVehicle> freeVehicles;
+    private Object lock;
+    private Semaphore lockerofVehicles;
 
     private static class SingletonHolder {
         private static ResourcesHolder instance = new ResourcesHolder();
+    }
+
+    private ResourcesHolder() {
+        vehicleRequests = new ConcurrentLinkedQueue<>();
+        freeVehicles = new ConcurrentLinkedQueue<>();
+        lock = new Object();
     }
 
     /**
@@ -37,19 +48,19 @@ public class ResourcesHolder {
      * @return {@link Future<DeliveryVehicle>} object which will resolve to a
      * {@link DeliveryVehicle} when completed.
      */
-    public Future<DeliveryVehicle> acquireVehicle() throws InterruptedException {
-        while (!s.tryAcquire());
-        System.out.println("acquired Vehicle");
-        Future result = new Future();
-        boolean found = false;
-        for (int i = 0; i < vehicles.length & !found; i++) {
-            if (vehicles[i].isAvailable()) {
-                result.resolve(vehicles[i]);
-                found = true;
-                vehicles[i].acquire();
+    public Future<DeliveryVehicle> acquireVehicle() {
+        synchronized (lock) {
+            Future<DeliveryVehicle> f = new Future<>();
+            vehicleRequests.add(f);
+            System.out.println("acquiring vehicle by resHolder");
+            if (!freeVehicles.isEmpty()) {
+                Future firstFuture = vehicleRequests.poll();
+                DeliveryVehicle firstFreeVehicle = freeVehicles.poll();
+                firstFuture.resolve(firstFreeVehicle);
+                System.out.println("firstFuture.get  " + firstFuture.get());
             }
+            return f;
         }
-        return result;
     }
 
     /**
@@ -60,9 +71,15 @@ public class ResourcesHolder {
      * @param vehicle {@link DeliveryVehicle} to be released.
      */
     public void releaseVehicle(DeliveryVehicle vehicle) {
-        System.out.println("vehicle released");
-        vehicle.setAvailable();
-        s.release();
+        synchronized (lock) {
+            freeVehicles.add(vehicle);
+            if (!vehicleRequests.isEmpty()) {
+                Future firstFuture = vehicleRequests.poll();
+                DeliveryVehicle firstFreeVehicle = freeVehicles.poll();
+                firstFuture.resolve(firstFreeVehicle);
+                System.out.println("vehicle released");
+            }
+        }
     }
 
     /**
@@ -73,6 +90,9 @@ public class ResourcesHolder {
      */
     public void load(DeliveryVehicle[] vehicles) {
         this.vehicles = vehicles;
-        s = new Semaphore(vehicles.length, true);
+        for (int i = 0; i < vehicles.length; i++) {
+            freeVehicles.add(vehicles[i]);
+        }
+        lockerofVehicles=new Semaphore(vehicles.length);
     }
 }

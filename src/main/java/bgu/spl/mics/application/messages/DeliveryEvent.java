@@ -21,6 +21,7 @@ public class DeliveryEvent implements Event<String> {
         return future;
     }
 
+
     public String getAdress() {
         return adress;
     }

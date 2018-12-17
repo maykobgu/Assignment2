@@ -22,8 +22,8 @@ import static bgu.spl.mics.application.passiveObjects.OrderResult.*;
 public class InventoryService extends MicroService {
     private Inventory inventory = Inventory.getInstance();
 
-    public InventoryService(BookInventoryInfo[] info) {
-        super("InventoryService");
+    public InventoryService(BookInventoryInfo[] info, String name) {
+        super(name);
         inventory.load(info);
     }
 
@@ -31,25 +31,23 @@ public class InventoryService extends MicroService {
     protected void initialize() {
         subscribeEvent(CheckAvailability.class, this::processEvent);
         subscribeBroadcast(TerminateBroadcast.class, this::finish);
-
     }
 
-    private synchronized void processEvent(CheckAvailability e) {
+    private void processEvent(CheckAvailability e) {
+        System.out.println("got a CheckAvailability event");
         OrderResult orderResult = null;
         int price = -1;
+        synchronized (e.getCustomer()){
         int currentAmount = e.getCustomer().getAvailableCreditAmount();
         if (currentAmount >= inventory.getPrice(e.getBook())) {
             orderResult = inventory.take(e.getBook()); //attempt to take book
             if (orderResult == SUCCESSFULLY_TAKEN) {
                 price = inventory.getPrice(e.getBook());
             }
-        }
+        }}
         if (price == -1)
             System.out.println("customer doesn't have enough money");
-        this.complete((Event) e, price);
-        if (orderResult == SUCCESSFULLY_TAKEN)
-            while (e.getCustomer().getAvailableCreditAmount() !=
-                    (currentAmount - inventory.getPrice(e.getBook()))) ;
+        complete((Event) e, price);
     }
 
     private void finish(TerminateBroadcast e) {

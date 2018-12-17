@@ -8,7 +8,7 @@ private Future future;
 
     public ExampleEvent(String senderName) {
         this.senderName = senderName;
-        future = new Future();
+        future = null;
     }
 
     public String getSenderName() {
@@ -17,6 +17,9 @@ private Future future;
 
     @Override
     public Future getFuture() {
+        if (future == null)
+            future = new Future();
         return future;
     }
+
 }

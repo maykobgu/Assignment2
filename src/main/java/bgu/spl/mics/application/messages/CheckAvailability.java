@@ -27,5 +27,4 @@ public class CheckAvailability implements Event<String> {
         return future;
     }
 
-
 }

@@ -1,7 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import com.sun.tools.javac.util.Pair;
+import javafx.util.Pair;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * <p>
  * You may add fields and methods to this class as you see fit (including public methods).
  */
-public class Customer {
+public class Customer implements Serializable {
     private int id;
     private String name;
     private String address;

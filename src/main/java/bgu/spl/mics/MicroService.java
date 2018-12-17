@@ -2,6 +2,7 @@ package bgu.spl.mics;
 
 import bgu.spl.mics.application.services.TimeService;
 
+import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -149,7 +150,6 @@ public abstract class MicroService implements Runnable {
      * message.
      */
     protected final void terminate() {
-        //TICKS
         this.terminated = true;
         messageBus.unregister(this);
     }
@@ -168,21 +168,23 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
-        if (!(this instanceof TimeService)) {
-            messageBus.register(this);
-            initialize();
-            while (!terminated) {
-                try {
-                    Message message = messageBus.awaitMessage(this);
-                    Callback c = callbacks.get(message.getClass());
-                    c.call(message);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        messageBus.register(this);
+        initialize();
+        while (!terminated) {
+            try {
+                Message message = messageBus.awaitMessage(this);
+                if(!(message instanceof Broadcast))
+                System.out.println(this.getName()+ " Hi I got this event: "+message);
+                Callback c = callbacks.get(message.getClass());
+                c.call(message);
+//                while (!message.getFuture().isDone());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        } else {
-            initialize();
-//        System.exit(0);
         }
+    }
+
+    public boolean isTerminated(){
+        return terminated;
     }
 }

@@ -2,6 +2,7 @@ package bgu.spl.mics.application.passiveObjects;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.concurrent.Semaphore;
 
 /**
  * Passive data-object representing the store inventory.
@@ -15,8 +16,7 @@ import java.util.HashMap;
  */
 
 
-//TODO all the class should be synchronized
-public class Inventory {
+public class Inventory implements Serializable {
     private static BookInventoryInfo[] inventory;
 
 
@@ -54,17 +54,24 @@ public class Inventory {
      */
     public OrderResult take(String book) {
         boolean taken = false;
-        int result = checkAvailabiltyAndGetPrice(book);
-        if (result == -1) return OrderResult.NOT_IN_STOCK;
-        else {
+        BookInventoryInfo bookToTake = null;
             for (int i = 0; i < inventory.length & !taken; i++) {
                 if (inventory[i].getBookTitle().equals(book)) {
-                    inventory[i].reduceAmountInInventory();
+                    bookToTake = inventory[i];
                     taken = true;
                 }
             }
-            return OrderResult.SUCCESSFULLY_TAKEN;
-        }
+            if (bookToTake != null) {
+                if (bookToTake.getSempahore().tryAcquire()) {
+                    int result = checkAvailabiltyAndGetPrice(book);
+                    if (result == -1) return OrderResult.NOT_IN_STOCK;
+                    else {
+                        bookToTake.reduceAmountInInventory();
+                        return OrderResult.SUCCESSFULLY_TAKEN;
+                    }
+                }
+            }
+            return OrderResult.NOT_IN_STOCK;
     }
 
     /**
@@ -91,25 +98,21 @@ public class Inventory {
      * their respective available amount in the inventory.
      * This method is called by the main method in order to generate the output.
      */
-    public void printInventoryToFile(String filename) {
+    public void printInventoryToFile(String filename) throws IOException {
         HashMap inventoryFile = new HashMap();
         for (int i = 0; i < inventory.length; i++) {
             inventoryFile.put(inventory[i].getBookTitle(), inventory[i].getAmountInInventory());
         }
-        Writer writer = null;
+        FileOutputStream file = new FileOutputStream(new File(filename));
+        ObjectOutputStream stream = null;
         try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename + ".txt"), "utf-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            writer.write(inventoryFile.toString());
+            stream = new ObjectOutputStream(new FileOutputStream(filename));
         } catch (IOException e) {
             e.printStackTrace();
         }
-    //TODO check!!!!!!!!!!!!!!!
+        stream.writeObject(inventoryFile);
+        stream.close();
+        file.close();
     }
 
     public int getPrice(String book) {
