@@ -32,7 +32,7 @@ public class BookStoreRunner implements Serializable {
         LinkedList<Thread> threads = new LinkedList<>();
         int index = 0;
         JsonParser parser = new JsonParser();
-        String path = "/Users/meshiy/Downloads/inputs/2.json";
+        String path = "/Users/meshiy/Downloads/input.json";
 //        String path = args[0];
         JsonArray initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
         JsonElement initialResources = parser.parse(getReader(path)).getAsJsonObject().get("initialResources").getAsJsonArray().get(0);
@@ -127,7 +127,11 @@ public class BookStoreRunner implements Serializable {
         int counter = 1;
         for (Thread thread : threads) {
             try {
-                System.out.println(thread.getState());
+                System.out.println(thread.getState() + " "+ thread.getName());
+                if(thread.getState().equals(Thread.State.WAITING) | thread.getState().equals(Thread.State.BLOCKED)){
+                    System.out.println(thread.getName()+ " Stack trace:");
+                    System.out.println(thread.getStackTrace());
+                }
                 thread.join();
                 System.out.println(" thread "+counter);
                 counter++;
@@ -135,7 +139,7 @@ public class BookStoreRunner implements Serializable {
                 e.printStackTrace();
             }
         }
-//
+
 //        //customers
 //        FileOutputStream file = new FileOutputStream(args[1]);
 //        ObjectOutputStream stream = new ObjectOutputStream(file);
