@@ -4,14 +4,12 @@ import bgu.spl.mics.Broadcast;
 import bgu.spl.mics.Future;
 
 public class ExampleBroadcast implements Broadcast {
-
-    private String senderId;
     private Future future;
+    private String senderId;
 
     public ExampleBroadcast(String senderId) {
         this.senderId = senderId;
-        future = null;
-
+        future = new Future();
     }
 
     public String getSenderId() {

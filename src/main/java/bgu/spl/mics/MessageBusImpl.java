@@ -1,6 +1,6 @@
 package bgu.spl.mics;
 
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageBusImpl implements MessageBus {
     private ConcurrentHashMap<Class<? extends Message>, Queue<MicroService>> queuesByEvent;
     private ConcurrentHashMap<MicroService, ArrayBlockingQueue> queues;
+    private ConcurrentHashMap<MicroService, LinkedList<Class<? extends Message>>> eventMapping;
+    private ConcurrentHashMap<MicroService, LinkedList<Class<? extends Message>>> broadcastMapping;
 
 
     private static class SingletonHolder {
@@ -21,6 +23,8 @@ public class MessageBusImpl implements MessageBus {
     private MessageBusImpl() {
         queuesByEvent = new ConcurrentHashMap<>();
         queues = new ConcurrentHashMap<>();
+        eventMapping = new ConcurrentHashMap<>();
+        broadcastMapping = new ConcurrentHashMap<>();
     }
 
     /**
@@ -32,7 +36,6 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-        System.out.println("subscribeEvent");
         if (queuesByEvent.get(type) == null) {
             ArrayBlockingQueue arr = new ArrayBlockingQueue<>(1000);
             synchronized (queuesByEvent) {
@@ -42,80 +45,117 @@ public class MessageBusImpl implements MessageBus {
         } else synchronized (queuesByEvent) {
             queuesByEvent.get(type).add(m);
         }
-        // TODO capacity?
+        if (eventMapping.get(type) == null) {
+            LinkedList<Class<? extends Message>> list = new LinkedList<>();
+            synchronized (eventMapping) {
+                eventMapping.put(m, list);
+                eventMapping.get(m).add(type);
+            }
+        } else synchronized (eventMapping) {
+            eventMapping.get(m).add(type);
+        }
     }
 
     @Override
     public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-        System.out.println("subscribeBroadcast");
         if (queuesByEvent.get(type) == null) {
             queuesByEvent.put(type, new ArrayBlockingQueue<>(1000));
             queuesByEvent.get(type).add(m);
         } else queuesByEvent.get(type).add(m);
+        if (broadcastMapping.get(type) == null) {
+            LinkedList<Class<? extends Message>> list = new LinkedList<>();
+            synchronized (broadcastMapping) {
+                broadcastMapping.put(m, list);
+                broadcastMapping.get(m).add(type);
+            }
+        } else synchronized (broadcastMapping) {
+            broadcastMapping.get(m).add(type);
+        }
         // TODO capacity?
     }
 
     @Override
-    public <T> void complete(Event<T> e, T result) {//TODO change this!!!!!!!!!!!!!!!
-        System.out.println("complete");
-            e.getFuture().resolve(result);
+    public <T> void complete(Event<T> e, T result) {
+        e.getFuture().resolve(result);
     }
 
     @Override
     public void sendBroadcast(Broadcast b) {
-        System.out.println("sendBroadcast");
-        while (queuesByEvent.get(b.getClass()) == null || queuesByEvent.get(b.getClass()).isEmpty()) ;
-        Queue q = queuesByEvent.get(b.getClass());
-        synchronized (q) {
-            int size = q.size();
-            for (int i = 0; i < size; i++) {
-                MicroService m = (MicroService) q.poll();
-                queues.get(m).add(b);
-                q.add(m);
+        if (queuesByEvent.get(b.getClass()) != null && !queuesByEvent.get(b.getClass()).isEmpty()) {
+            Queue q = queuesByEvent.get(b.getClass());
+            synchronized (q) {
+                int size = q.size();
+                for (int i = 0; i < size; i++) {
+                    MicroService m = (MicroService) q.poll();
+                    queues.get(m).add(b);
+                    q.add(m);
+                }
             }
         }
-//        notifyAll();
     }
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-        System.out.println("sendEvent");
         if (queuesByEvent.get(e.getClass()) != null && !queuesByEvent.get(e.getClass()).isEmpty()) {
-            MicroService m = queuesByEvent.get(e.getClass()).poll(); //get the first micro service
-            ArrayBlockingQueue q = queues.get(m);
-            synchronized (q) {
-                try {
-                    q.put(e); //find the relevant queue and push the message
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
+            synchronized (queuesByEvent) {
+                if (queuesByEvent.get(e.getClass()) != null && !queuesByEvent.get(e.getClass()).isEmpty()) {
+                    MicroService m = queuesByEvent.get(e.getClass()).poll(); //get the first micro service
+                    ArrayBlockingQueue q = queues.get(m);
+                    if (q != null) {
+                        synchronized (q) {
+                            try {
+                                q.put(e); //find the relevant queue and push the message
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                            queuesByEvent.get(e.getClass()).add(m);
+                        }
+                    }//push the micro service back to it's roundRobins queue
+                    return e.getFuture();
                 }
-                queuesByEvent.get(e.getClass()).add(m);
-            }//push the micro service back to it's roundRobins queue
-//        while (e.getFuture().get() == null) ;
+            }
         }
-        return e.getFuture();
+        return null;
     }
-
 
     @Override
     public void register(MicroService m) {
-        System.out.println("register");
         // TODO capacity?
         queues.put(m, new ArrayBlockingQueue<>(100));
     }
 
     @Override
     public void unregister(MicroService m) {
-        System.out.println("unregister");
         queues.remove(m);
+        unregisterHelper(eventMapping, m);
+        unregisterHelper(broadcastMapping, m);
     }
+
 
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {
-        System.out.println("awaitMessage");
         if (queues.get(m) == null)
             throw new NullPointerException();
         return (Message) (queues.get(m).take()); //takes a message from the queue
+    }
+
+    private void unregisterHelper(ConcurrentHashMap Mapping, MicroService m) {
+        synchronized (Mapping) {
+            List list = (List) Mapping.get(m);
+            if (list != null) {
+                if (!list.isEmpty()) {
+                    for (int i = 0; i < list.size(); i++) {
+                        Queue tmp = queuesByEvent.get(list.get(i));
+                        for (int j = 0; j < tmp.size(); j++) {
+                            MicroService service = (MicroService) tmp.poll();
+                            if (!service.equals(m))
+                                tmp.add(service);
+                        }
+                    }
+                    Mapping.remove(m);
+                } else Mapping.remove(m);
+            }
+        }
     }
 
 }

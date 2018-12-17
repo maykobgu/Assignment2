@@ -1,5 +1,4 @@
 package bgu.spl.mics.example.services;
-
 import java.util.concurrent.TimeUnit;
 
 import bgu.spl.mics.Future;

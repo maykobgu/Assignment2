@@ -30,12 +30,9 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not wait until it is available.
      */
     public T get() {
-        while (!isDone());
+        while (!isDone()) ;
         return result;
     }
-
-
-
 
     /**
      * Resolves the result of this Future object.
@@ -65,18 +62,24 @@ public class Future<T> {
      * wait for {@code timeout} TimeUnits {@code unit}. If time has
      * elapsed, return null.
      */
-    public T get(long timeout, TimeUnit unit) { // i change that, because we had an error
-        synchronized (this) {
-            while (!isDone()) {
-                try {
-                    wait(unit.toSeconds(timeout));
-                    return result;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    public T get(long timeout, TimeUnit unit) {
+        while (result == null) {
+            try {
+                unit.sleep(timeout);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            return result;
         }
+        return result;
+
+//        while (result == null) {
+//            try {
+//                wait(unit.toMillis(timeout));
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return result;
     }
 
 }
