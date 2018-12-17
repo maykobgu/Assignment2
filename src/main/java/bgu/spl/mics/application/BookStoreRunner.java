@@ -32,8 +32,8 @@ public class BookStoreRunner implements Serializable {
         LinkedList<Thread> threads = new LinkedList<>();
         int index = 0;
         JsonParser parser = new JsonParser();
-        String path = "/Users/meshiy/Downloads/input.json";
-//        String path = args[0];
+//        String path = "/Users/meshiy/Downloads/input.json";
+        String path = args[0];
         JsonArray initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
         JsonElement initialResources = parser.parse(getReader(path)).getAsJsonObject().get("initialResources").getAsJsonArray().get(0);
         JsonArray vehicles = initialResources.getAsJsonObject().get("vehicles").getAsJsonArray();
@@ -140,25 +140,25 @@ public class BookStoreRunner implements Serializable {
             }
         }
 
-//        //customers
-//        FileOutputStream file = new FileOutputStream(args[1]);
-//        ObjectOutputStream stream = new ObjectOutputStream(file);
-//        stream.writeObject(customersHashMap);
-//
-//        //inventory
-//        Inventory.getInstance().printInventoryToFile(args[2]);
-//
-//        //receipts
-//        MoneyRegister.getInstance().printOrderReceipts(args[3]);
-//
-//        // moneyRegister
-//        FileOutputStream file3 = new FileOutputStream(args[4]);
-//        ObjectOutputStream stream3 = new ObjectOutputStream(file3);
-//        stream3.writeObject(MoneyRegister.getInstance());
-//        stream3.close();
-//        file3.close();
-//        stream.close();
-//        file.close();
+        //customers
+        FileOutputStream file = new FileOutputStream(args[1]);
+        ObjectOutputStream stream = new ObjectOutputStream(file);
+        stream.writeObject(customersHashMap);
+
+        //inventory
+        Inventory.getInstance().printInventoryToFile(args[2]);
+
+        //receipts
+        MoneyRegister.getInstance().printOrderReceipts(args[3]);
+
+        // moneyRegister
+        FileOutputStream file3 = new FileOutputStream(args[4]);
+        ObjectOutputStream stream3 = new ObjectOutputStream(file3);
+        stream3.writeObject(MoneyRegister.getInstance());
+        stream3.close();
+        file3.close();
+        stream.close();
+        file.close();
     }
 
     private static int getNumOfInstances(JsonElement services, String field) {
