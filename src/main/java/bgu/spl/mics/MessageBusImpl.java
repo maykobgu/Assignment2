@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.services.ResourceService;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -62,10 +64,8 @@ public class MessageBusImpl implements MessageBus {
             if (queuesByEvent.get(type) == null) {
                 queuesByEvent.put(type, new LinkedBlockingQueue());
                 queuesByEvent.get(type).add(m);
-                System.out.println(m.getName() + " subscribe to a broadcast message from type: " + type);
             } else {
                 queuesByEvent.get(type).add(m);
-                System.out.println(m.getName() + " subscribe to a broadcast message from type: " + type);
             }
         }
         synchronized (broadcastMapping) {
@@ -105,12 +105,13 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-        if (queuesByEvent.get(e.getClass()) != null && !queuesByEvent.get(e.getClass()).isEmpty()) {
-            synchronized (queuesByEvent) {
+        synchronized (queuesByEvent) {
+            if (queuesByEvent.get(e.getClass()) != null && !queuesByEvent.get(e.getClass()).isEmpty()) {
                 MicroService m = queuesByEvent.get(e.getClass()).poll(); //get the first micro service
                 LinkedBlockingQueue q = queues.get(m);
-                if (q != null) {
-                    synchronized (q) {
+                if(q!=null){
+                synchronized (q) {
+                    if (q != null) {
                         try {
                             q.put(e); //find the relevant queue and push the message
                         } catch (InterruptedException e1) {
@@ -118,10 +119,15 @@ public class MessageBusImpl implements MessageBus {
                         }
                         queuesByEvent.get(e.getClass()).add(m);
                     }
-                }//push the micro service back to it's roundRobins queue
-            }
-        } else
-            complete(e, null);
+                    //push the micro service back to it's roundRobins queue
+                    else
+                        complete(e, null);
+                }
+                }
+                else complete(e,null);
+            } else
+                complete(e, null);
+        }
         return e.getFuture();
     }
 
@@ -132,19 +138,18 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void unregister(MicroService m) {
-        System.out.println("Starting to unregister " + m.getName());
-        Queue q = queues.get(m);
-        for (int i = 0; i < q.size(); i++) {
-            Message message = (Message) q.poll();
-            if (message instanceof Event)
-                complete((Event) message, null);
-        }
-        queues.remove(m);
         unregisterHelper(eventMapping, m);
         unregisterHelper(broadcastMapping, m);
-        System.out.println(("Finished to unregister " + m.getName()));
+        synchronized(queues.get(m)) {
+            Queue q = queues.get(m);
+            for (int i = 0; i < q.size(); i++) {
+                Message message = (Message) q.poll();
+                if (message instanceof Event)
+                    complete((Event) message, null);
+            }
+            queues.remove(m);
+        }
     }
-
 
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {

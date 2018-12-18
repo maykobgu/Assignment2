@@ -171,15 +171,11 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         messageBus.register(this);
         initialize();
-        System.out.println(Thread.currentThread().getName()+" - "+ this.getName());
         while (!terminated) {
             try {
                 Message message = messageBus.awaitMessage(this);
-//                if(message instanceof TerminateBroadcast)
-//                    System.out.println(this.getName()+ " Hi I got terminate event: "+message);
                 Callback c = callbacks.get(message.getClass());
                 c.call(message);
-//                while (!message.getFuture().isDone());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

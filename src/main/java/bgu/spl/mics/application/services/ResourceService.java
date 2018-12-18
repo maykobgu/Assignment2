@@ -37,19 +37,14 @@ public class ResourceService extends MicroService {
 
     }
 
-    private void processEvent(AcquireVehicleEvent e) throws InterruptedException {
-        System.out.println(this.getName() +" got an acquireVehicleEvent");
+    private void processEvent(AcquireVehicleEvent e){
         Future result = instance.acquireVehicle();
-       // System.out.println("vehicle acquired (resService, printing the result "+ result.get());
         futures.add(result);
         complete((Event) e, result);
-        System.out.println(e+ " resolved to the result: "+ result);
     }
 
     private void releaseEvent(ReleaseVehicleEvent e) {
-        System.out.println(this.getName()+ " got a releaseVehicle");
         instance.releaseVehicle(e.getVehicle());
-        System.out.println(this.getName()+ " I used releasevehicle method");
         complete(e, null);
     }
 

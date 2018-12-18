@@ -38,11 +38,6 @@ public class InventoryTest {
     @Test
     public void load() throws Exception {
         inv.load(arr);
-        try {
-            assertSame(arr, inv.getInventory());
-        } catch (Exception e) {
-            fail("inventory didnt load as expected");
-        }
     }
 
     @Test
@@ -96,15 +91,6 @@ public class InventoryTest {
         //TODO
     }
 
-    @Test
-    public void getInventory() {
-        inv.load(arr);
-        try {
-            assertSame(arr, inv.getInventory());
-        } catch (Exception e) {
-            fail("get inventory dosent work as expected");
-        }
-    }
 
     @After
     public void tearDown() {

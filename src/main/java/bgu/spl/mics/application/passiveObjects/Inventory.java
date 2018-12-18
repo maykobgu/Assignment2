@@ -114,16 +114,4 @@ public class Inventory implements Serializable {
         stream.close();
         file.close();
     }
-
-    public int getPrice(String book) {
-        for (BookInventoryInfo object : inventory) {
-            if (object.getBookTitle().equals(book))
-                return object.getPrice();
-        }
-        return -1;
-    }
-
-    public BookInventoryInfo[] getInventory() {
-        return inventory;
-    }
 }

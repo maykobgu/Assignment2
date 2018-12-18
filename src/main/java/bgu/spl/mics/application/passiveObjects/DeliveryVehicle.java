@@ -45,10 +45,7 @@ public class DeliveryVehicle {
      * @param distance The distance from the store to the customer.
      */
     public void deliver(String address, int distance) throws InterruptedException {
-        System.out.println("i'm driving");
         int deliveryDuration = distance * getSpeed();
-//        Thread.sleep(deliveryDuration);
-        Thread.sleep(10);
-        System.out.println("i'm done driving");
+        Thread.sleep(deliveryDuration);
     }
 }

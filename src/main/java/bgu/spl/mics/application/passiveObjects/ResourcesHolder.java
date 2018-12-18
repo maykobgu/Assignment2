@@ -52,12 +52,10 @@ public class ResourcesHolder {
         synchronized (lock) {
             Future<DeliveryVehicle> f = new Future<>();
             vehicleRequests.add(f);
-            System.out.println("acquiring vehicle by resHolder");
             if (!freeVehicles.isEmpty()) {
                 Future firstFuture = vehicleRequests.poll();
                 DeliveryVehicle firstFreeVehicle = freeVehicles.poll();
                 firstFuture.resolve(firstFreeVehicle);
-                System.out.println("firstFuture.get  " + firstFuture.get());
             }
             return f;
         }
@@ -77,7 +75,6 @@ public class ResourcesHolder {
                 Future firstFuture = vehicleRequests.poll();
                 DeliveryVehicle firstFreeVehicle = freeVehicles.poll();
                 firstFuture.resolve(firstFreeVehicle);
-                System.out.println("vehicle released");
             }
         }
     }

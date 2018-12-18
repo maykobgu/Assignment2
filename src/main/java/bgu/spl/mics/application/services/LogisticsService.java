@@ -32,20 +32,14 @@ public class LogisticsService extends MicroService {
     }
 
     private void processEvent(DeliveryEvent e) throws InterruptedException {
-        System.out.println(this.getName()+" I got the event "+ e);
-//        System.out.println(this.toString());
         AcquireVehicleEvent acq = new AcquireVehicleEvent();
-        System.out.println(this.getName()+ "sending the event"+ acq);
         Future result = sendEvent(acq);
-//        Future futureResult = (Future) result.get();
-//        System.out.println("the futureResult i got is "+futureResult);
-        System.out.println(this.getName()+ "Hi I am trying to get the result");
-        System.out.println(result.get());
-        DeliveryVehicle vehicle = (DeliveryVehicle) ((Future)result.get()).get();
-        vehicle.deliver(e.getAdress(), e.getDistance());
-        ReleaseVehicleEvent rel = new ReleaseVehicleEvent(vehicle);
-        sendEvent(rel);
-        System.out.println(this.getName()+ "sending the event"+ rel);
+        if(result.get()!=null) {
+            DeliveryVehicle vehicle = (DeliveryVehicle) ((Future) result.get()).get();
+            vehicle.deliver(e.getAdress(), e.getDistance());
+            ReleaseVehicleEvent rel = new ReleaseVehicleEvent(vehicle);
+            sendEvent(rel);
+        }
         complete(e, null);
     }
 

@@ -46,15 +46,11 @@ public class APIService extends MicroService {
             if (orderSchedule.get(i).getValue() == e.getCurrentTick()) {
                 OrderBookEvent order = new OrderBookEvent(customer, orderSchedule.get(i).getKey(), e.getCurrentTick());
                 Future result = sendEvent(order); //last result- receipt
-                System.out.println(this.getName() +"Sent event "+ order);
-                if (!result.get().equals(-1)) {
+                if (result.get()!= null && !result.get().equals(-1)) {
                     customer.addReceipt((OrderReceipt) result.get());
                     DeliveryEvent deliver = new DeliveryEvent(customer);
                     sendEvent(deliver); //does not need to wait
-                    System.out.println(this.getName()+ "sent event "+ deliver);
                 }
-                else
-                    System.out.println(this.getName()+" I couldnt produce delivery event");
             }
         }
     }

@@ -34,19 +34,16 @@ public class SellingService extends MicroService {
     }
 
     private void processEvent(OrderBookEvent e) {
-        System.out.println(this.getName()+" got an orderBookevent");
         CheckAvailability check = new CheckAvailability(e.getCustomer(), e.getBookTitle());
         Future price = sendEvent(check); //should be price
-        System.out.println("the price is:  "+price.get());
         OrderReceipt receipt = null;
         if ((int) price.get() != -1) {
-            receipt = MoneyRegister.createReceipt(e.getCustomer().getName(), e.getCustomer().getId(),
+            receipt = new OrderReceipt(e.getCustomer().getName(), e.getCustomer().getId(),
                     e.getBookTitle(), (int) price.get(), currentTick, e.getOrderedTick(), currentTick); //make receipt
             moneyRegister.chargeCreditCard(e.getCustomer(), (int) price.get()); //charge the customer for this book
             moneyRegister.file(receipt);
         }
         if (receipt == null) {
-            System.out.println(" no receipt so no charge ");
             this.complete((Event) e, -1);
         } else
             this.complete((Event) e, receipt);

@@ -20,8 +20,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import javafx.util.Pair;
 
-import static java.lang.Thread.sleep;
-
 /**
  * This is the Main class of the application. You should parse the input file,
  * create the different instances of the objects, and run the system.
@@ -32,7 +30,6 @@ public class BookStoreRunner implements Serializable {
         LinkedList<Thread> threads = new LinkedList<>();
         int index = 0;
         JsonParser parser = new JsonParser();
-//        String path = "/Users/meshiy/Downloads/input.json";
         String path = args[0];
         JsonArray initialInventory = parser.parse(getReader(path)).getAsJsonObject().get("initialInventory").getAsJsonArray();
         JsonElement initialResources = parser.parse(getReader(path)).getAsJsonObject().get("initialResources").getAsJsonArray().get(0);
@@ -124,17 +121,11 @@ public class BookStoreRunner implements Serializable {
         threads.add(timeServiceThread);
 
 
-        int counter = 1;
         for (Thread thread : threads) {
             try {
-                System.out.println(thread.getState() + " "+ thread.getName());
                 if(thread.getState().equals(Thread.State.WAITING) | thread.getState().equals(Thread.State.BLOCKED)){
-                    System.out.println(thread.getName()+ " Stack trace:");
-                    System.out.println(thread.getStackTrace());
                 }
                 thread.join();
-                System.out.println(" thread "+counter);
-                counter++;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

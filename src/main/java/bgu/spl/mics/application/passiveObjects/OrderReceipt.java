@@ -18,10 +18,12 @@ public class OrderReceipt implements Serializable {
     private int issuedTick; //tick in which this receipt was issued (upon completing the corresponding event)
     private int orderTick; //tick in which the customer ordered the book.
     private int proccessTick; //tick in which the selling service started processing the order.
+    private static int counter=0;
 
-    public OrderReceipt(int orderId, String seller, int customer, String bookTitle,
+    public OrderReceipt(String seller, int customer, String bookTitle,
                         int price, int issuedTick, int orderTick, int proccessTick) {
-        this.orderId = orderId;
+        counter++;
+        this.orderId = counter;
         this.seller = seller;
         this.customer = customer;
         this.bookTitle = bookTitle;

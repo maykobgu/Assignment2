@@ -34,19 +34,16 @@ public class InventoryService extends MicroService {
     }
 
     private void processEvent(CheckAvailability e) {
-        System.out.println("got a CheckAvailability event");
         OrderResult orderResult = null;
         int price = -1;
         synchronized (e.getCustomer()){
         int currentAmount = e.getCustomer().getAvailableCreditAmount();
-        if (currentAmount >= inventory.getPrice(e.getBook())) {
+        if (currentAmount >= inventory.checkAvailabiltyAndGetPrice(e.getBook())) {
             orderResult = inventory.take(e.getBook()); //attempt to take book
             if (orderResult == SUCCESSFULLY_TAKEN) {
-                price = inventory.getPrice(e.getBook());
+                price = inventory.checkAvailabiltyAndGetPrice(e.getBook());
             }
         }}
-        if (price == -1)
-            System.out.println("customer doesn't have enough money");
         complete((Event) e, price);
     }
 

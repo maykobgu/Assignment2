@@ -80,10 +80,4 @@ public class MoneyRegister implements Serializable{
         stream.close();
         file.close();
     }
-
-    public static OrderReceipt createReceipt(String seller, int customer, String bookTitle, int price, int issuedTick, int orderTick, int proccessTick) {
-        OrderReceipt receipt = new OrderReceipt(counter, seller, customer, bookTitle, price, issuedTick, orderTick, proccessTick);
-        counter++;
-        return receipt;
-    }
 }
